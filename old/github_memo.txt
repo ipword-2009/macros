@@ -52,8 +52,6 @@ git push origin master
 
 
 
-
-
 <他のＰＣでGithubをインストール。既存のリポジトリを共有する>
 
 * Download and install Gitで、msysGit(Git-1.6.0.2-preview20080923)をインストール

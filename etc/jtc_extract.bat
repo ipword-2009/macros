@@ -17,9 +17,9 @@ echo ディレクトリ名は「%~p1」です。
 dir
 pause
 
-rem *******************************************************
+rem **************************************************************
 rem tifファイル(000003～)をすべて順に保存
-rem *******************************************************
+rem **************************************************************
 cd %~p1
 md tifs
 set destpath=%~p1tifs\
@@ -46,11 +46,15 @@ rem PDFtoDataで変換するデータ抽出
 rem *******************************************************
 
 rem JTC翻訳対象のファイル(000003～)を保存するフォルダを作成
+
+
 cd %~p1
 md data
 set destpath=%~dp1data\
 
+rem IPC番号が記載されている000001も取得するように修正　2014.8.12
 rem ファイル名の最後につける番号
+set num1=0
 set num3=0
 set num4=0
 set num5=0
@@ -62,7 +66,11 @@ set num10=0
 set suffix="000"
 
 rem JTC翻訳対象のファイル(000003～)の検索
-for /r %%f in (000003.tif, 000004.tif, 000005.tif, 000006.tif, 000007.tif, 000008.tif, 000009.tif, 000010.tif) do (
+rem IPC番号が記載されている000001も取得するように修正　2014.8.12
+
+for /r %%f in (000001.tif, 000003.tif, 000004.tif, 000005.tif, 000006.tif, 000007.tif, 000008.tif, 000009.tif, 000010.tif) do (
+
+rem for /r %%f in (000003.tif, 000004.tif, 000005.tif, 000006.tif, 000007.tif, 000008.tif, 000009.tif, 000010.tif) do (
 
 	set dirpath=%%~dpf
 
@@ -82,6 +90,13 @@ for /r %%f in (000003.tif, 000004.tif, 000005.tif, 000006.tif, 000007.tif, 00000
 		)
 	)
 )
+
+rem C:\Translation\TRANS_DATA\日本翻訳センター\textdata ディレクトリを削除して新たに作成
+rem /sオプションは、サブディレクトリとファイルも含めてディレクトリを一括削除
+rem /qオプションは、削除前に確認メッセージを表示しない
+
+rd C:\Translation\TRANS_DATA\日本翻訳センター\textdata /s /q
+md C:\Translation\TRANS_DATA\日本翻訳センター\textdata
 
 start "" "C:\Program Files (x86)\CrossLanguage\PDFtoData2\PDF2Data2.exe"
 
@@ -108,7 +123,13 @@ goto :eof
 :PROCESS2
 	set newpath=!fullpath!
 
+rem IPC番号が記載されている000001も取得するように修正　2014.8.12
 	if exist data\!filename!.tif (
+		if !filename!==000001 (
+			rem ファイル名の最後につける番号をインクリメント
+			set /a num1=!num1!+1
+			call :PROCESS3 !num1!
+		)
 		if !filename!==000003 (
 			rem ファイル名の最後につける番号をインクリメント
 			set /a num3=!num3!+1
