@@ -1,0 +1,1860 @@
+//“Á‹–––±ƒc[ƒ‹@GŠÛ”Å ver. 1.31   2009/01/07
+//Copyright 1997-2009 ˆË“c@–Î
+
+Main:
+$ver="V1.31 n:"+date+" "+time;
+
+#thinkyou=2;
+#FFF=0;
+
+//---------------iniƒtƒ@ƒCƒ‹‚Ìİ’è‚ğ“Ç‚Ş--------------
+$Ini = macrodir + "\\MARPAT.ini";
+#ToMenu=getininum($Ini,"Marpat","ToMenu");
+#Teisokuka=getininum($Ini,"Marpat","Teisokuka");
+#Menukind=getininum($Ini,"Marpat","Menukind");
+#Fugohyolong=getininum($Ini,"Marpat","Fugohyolong");
+#DansinNo=getininum($Ini,"Marpat","DansinNo");
+#Kigou=getininum($Ini,"Marpat","Kigou");
+#Zenmaru=getininum($Ini,"Marpat","Zenmaru");
+#Preform = getininum($Ini,"Hdpaso","Preform");
+#ZuKind = getininum($Ini,"Hdpaso","ZuKind");
+#DR = getininum($Ini,"Hdpaso","DR");
+$DRNo = getinistr($Ini,"Hdpaso","DRNo");
+$DRName = getinistr($Ini,"Hdpaso","DRName");
+#SDR = getininum($Ini,"Hdpaso","SDR");
+$SDRNo = getinistr($Ini,"Hdpaso","SDRNo");
+$SDRName = getinistr($Ini,"Hdpaso","SDRName");
+$UShitei = getinistr($Ini,"Hdpaso","UShitei");
+#Renban = getininum($Ini,"Hdpaso","Renban");
+#FKan = getininum($Ini,"Hdpaso","FKan");
+#Tokujitsu = getininum($Ini,"Hdpaso","Tokujitsu");
+#Shinkyu = getininum($Ini,"Hdpaso","Shinkyu");
+#Ga = getininum($Ini,"Hdpaso","Ga");
+#Ra = getininum($Ini,"Hdpaso","Ra");
+#Mei = getininum($Ini,"Hdpaso","Mei");
+#Zu = getininum($Ini,"Hdpaso","Zu");
+#Yo = getininum($Ini,"Hdpaso","Yo");
+$Word = getinistr($Ini,"Hdpaso","Word");
+#Jikai =  getininum($Ini,"Hdpaso","Jikai");
+$s = getinistr($Ini,"Marpat","Page");
+
+if (#Ga==0 && #Ra==0 && #Mei==0 && #Zu==0 && #Yo==0 && #Tail==0){
+	#Ga = 1;#Ra = 1;#Mei = 1;#Zu = 1;#Yo = 1;#Tail = 1;
+	writeininum $Ini,"Hdpaso","Ga",1;
+	writeininum $Ini,"Hdpaso","Ra",1;
+	writeininum $Ini,"Hdpaso","Mei",1;
+	writeininum $Ini,"Hdpaso","Zu",1;
+	writeininum $Ini,"Hdpaso","Yo",1;
+	writeininum $Ini,"Hdpaso","Tail",1;
+}
+if ($Word==""){
+	$Word="c:\\program files\\microsoft office\\office11\\winword.exe";
+    writeinistr $Ini, "Hdpaso", "Word", $Word;
+}
+
+
+//---------------ƒ}ƒNƒƒT[ƒo—§‚¿ã‚°------------
+run "macserv.exe";
+if( !result ) {  
+	message "G‚Ü‚é‚¨‚³‚ñ‚Ìƒ}ƒNƒƒT[ƒo‚ªƒpƒX‚Ì’Ê‚Á‚½‚Æ‚±‚ë‚É‚ ‚è‚Ü‚¹‚ñ‚Ì‚Å\n"+"ì‹Æ’†~‚µ‚Ü‚·B";
+	endmacro;
+}
+
+ddeinitiate "HideMacroServer", "AllService";
+//ddeexecute "setcurdir " + directory;
+
+
+//----------------------ƒ_ƒCƒAƒƒO‚Ìİ’è--------------------------
+$MN[0]="marpat "+$ver;
+$MN[1]="’i—”Ô†•t‚¯(&A)";
+$MN[2]="’i—”Ô†æ‚è(&D)";
+$MN[3]="•„†•\‚Ìì¬(&F)";
+$MN[4]="—v–ñ‘‚ÌŒv”(&C)";
+$MN[5]="&Word ‚Ì‹N“®";
+$MN[6]="&Help";
+$MN[7]="I—¹(&ESC)";
+$MN[8]="Tem&plate";
+$MN[9]="Con&verter";
+$MN[10]="”{Šp(&J)";
+$MN[11]="‰ºü(&U)";
+$MN[12]="ã•t(&O)";
+$MN[13]="‰º•t(&K)";
+$MN[14]="<BR>•t(&X)";
+$MN[15]="<BR>æ(&Y)";
+$MN[16]="\"ÀŞÌŞÙ(&I)";//"ÀŞÌŞÙˆø—p•„
+$MN[17]="\&&±İÊß(&Q)";//&±İÊß»İÄŞ
+$MN[18]="<‚æ‚è¬(&S)";
+$MN[19]=">‚æ‚è‘å(&R)";
+$MN[20]="œŸ(&Z)";
+$MN[21]="HTML“ª(&T)";
+$MN[22]="HTMLI(&L)";
+
+ddepoke "newdialog","14,"+ $MN[0];
+ddepoke "newcontrol", "button,,"+ $MN[1];//’i—”Ô†•t‚¯
+ddepoke "notify", "10";
+ddepoke "newcontrol", "button,,"+ $MN[2];//’i—”Ô†æ‚è
+ddepoke "notify", "20";
+ddepoke "newcontrol", "button,,"+ $MN[3];//•„†•\‚Ìì¬
+ddepoke "notify", "30";
+ddepoke "newcontrol", "button,,"+ $MN[4];//—v–ñ‘‚ÌŒv”
+ddepoke "notify", "40";
+ddepoke "newcontrol", "button,,"+ $MN[5];//Word‚Ì‹N“®
+ddepoke "notify", "50";
+ddepoke "newcontrol", "button,,"+ $MN[6];//help
+ddepoke "notify", "60";
+ddepoke "newcontrol", "button,,"+ $MN[7];//I—¹
+ddepoke "notify", "70";
+ddepoke "newcolumn","30";
+ddepoke "newcontrol", "button,,"+ $MN[8];//¶Şİ¼®
+ddepoke "part", "11";
+ddepoke "notify", "80";
+ddepoke "newcontrol", "button,,"+ $MN[9];//converter
+ddepoke "part", "11";
+ddepoke "notify", "90";
+ddepoke "newcontrol", "button,,"+ $MN[21];//Html“ª
+ddepoke "part", "11";
+ddepoke "notify", "210";
+ddepoke "newcontrol", "button,,"+ $MN[22];//Html”ö
+ddepoke "part", "11";
+ddepoke "notify", "220";
+ddepoke "newcontrol", "button,,"+ $MN[10];//ÊŞ²¶¸
+ddepoke "part", "11";
+ddepoke "notify", "100";
+ddepoke "newcontrol", "button,,"+ $MN[11];//¶¾İ
+ddepoke "part", "11";
+ddepoke "notify", "110";
+ddepoke "newcontrol", "button,,"+ $MN[12];//³´Â·
+ddepoke "part", "11";
+ddepoke "notify", "120";
+ddepoke "newcontrol", "button,,"+ $MN[13];//¼ÀÂ·
+ddepoke "part", "11";
+ddepoke "notify", "130";
+ddepoke "newcontrol", "button,,"+ $MN[14];//‰üs¨<BR>‰üs
+ddepoke "part", "11";
+ddepoke "notify", "140";
+ddepoke "newcontrol", "button,,"+ $MN[15];//‰üs©<BR>‰üs
+ddepoke "part", "11";
+ddepoke "notify", "150";
+ddepoke "newcontrol", "button,,"+ $MN[16];//"ÀŞÌßÙ
+ddepoke "part", "11";
+ddepoke "notify", "160";
+ddepoke "newcontrol", "button,,"+$MN[17];//&±İÊß
+ddepoke "part", "11";
+ddepoke "notify", "170";
+ddepoke "newcontrol", "button,,"+ $MN[18];//< ‚æ‚è¬
+ddepoke "part", "11";
+ddepoke "notify", "180";
+ddepoke "newcontrol", "button,,"+ $MN[19];//> ‚æ‚è‘å
+ddepoke "part", "11";
+ddepoke "notify", "190";
+ddepoke "newcontrol", "button,,"+ $MN[20];//œŸ
+ddepoke "part", "11";
+ddepoke "notify", "200";
+ddepoke "newcontrol", "check,Macrogo,ˆ—Œã¤ÒÆ­°‚É–ß‚é(&1)";
+ddepoke "default", str(#ToMenu);
+ddepoke "newcontrol", "check,Chukan,’†ŠÔ•\¦—ª‚³‚¸A’á‘¬(&2)";
+ddepoke "default", str(#Teisokuka);
+ddepoke "newpage", "45";
+ddepoke "newcontrol", "radio,Fugohyo,•„†•\‚Ì–¼";
+ddepoke "item", "ÌºŞ³Ë®³.txt(&3)";
+ddepoke "part", "25";
+ddepoke "item", "Œ´•¶‚Ì–¼‚ğ—˜—p(&4)";
+ddepoke "default", str(#Fugohyolong+1);
+ddepoke "newcontrol", "radio,Preform,‘I‘ğ";
+ddepoke "item", "<&BR>";
+ddepoke "item", "ÌßÚÌ«°Ï¯ÄÀ¸Ş(&P)";
+ddepoke "default", str(#Preform);
+ddepoke "newcontrol", "radio,Dansin,’i—”Ô†•t‚¯‹K‘¥----’i—‚Ì“ª(’i“ª)‚ª";
+ddepoke "item", "(&5)‘SŠp½Íß°½‚È‚ç•t‚¯‚é";
+ddepoke "item", "(&6)‘SŠp½Íß°½‚Å‚È‚­‚Ä‚à•t‚¯‚é";
+ddepoke "default",str(#DansinNo+1);
+ddepoke "newcontrol", "check,Kigou,(&7)’i“ª‚ª—A–A@A*‚È‚ç•t‚¯‚È‚¢iˆ—Œã—–@*Á‹j";
+ddepoke "default", str(#Kigou);
+ddepoke "newcontrol", "check,Zenmaru,(&8)‘O’i––”ö‚ªuBv‚ÅI‚í‚Á‚Ä‚È‚­‚Ä‚Í•t‚¯‚È‚¢";
+ddepoke "default", str(#Zenmaru);
+
+call MakeDialog;
+
+
+//---------------iniƒtƒ@ƒCƒ‹‚É‘‚«‚İ------------------
+#vMacrogo=val(dderequest("getstate Macrogo"));
+#vChukan =val(dderequest("getstate Chukan"));
+#vFugohyo=val(dderequest("getstate Fugohyo"))-1;
+#vDansinNo =val(dderequest("getstate Dansin"));
+#vKigou=val(dderequest("getstate Kigou"));
+#vZenmaru=val(dderequest("getstate Zenmaru"));
+
+if (#vMacrogo != #ToMenu) {
+	writeininum $Ini,"Marpat","ToMenu",#vMacrogo;
+	#ToMenu=#vMacrogo;
+}
+if (#vJikai != #Jikai) {
+	writeininum $Ini,"Marpat","Jikai",#vJikai;
+	#Jikai=#vJikai;
+}
+if (#vChukan != #Teisokuka) {
+	writeininum $Ini,"Marpat","Teisokuka",#vChukan;
+	#Teisokuka=#vChukan;
+}
+if (#vFugohyo != #Fugohyolong) {
+	writeininum $Ini,"Marpat","Fugohyolong",#vFugohyo;
+	#Fugohyolong=#vFuhogyo;
+}
+if (#vDansinNo==1) $Dansin="@";
+else if (#vDansinNo != 1) $Dansin="‘S";
+if (#vDansinNo != #DansinNo+1) {
+	writeininum $Ini,"Marpat","DansinNo",#vDansinNo-1;
+	#DansinNo=#vDansinNo-1;
+}
+
+if (#vKigou != #Kigou) {
+	writeininum $Ini,"Marpat","Kigou",#vKigou;
+	#Kigou=#vKigou;
+}
+
+if (#vZenmaru != #Zenmaru) {
+	writeininum $Ini,"Marpat","Zenmaru",#vZenmaru;
+	#Zenmaru=#vZenmaru;
+}
+
+#vPreform=val(dderequest("getstate Preform"));
+if (#vPreform != #Preform) {
+	writeininum $Ini,"Hdpaso","Preform",#vPreform;#Preform=#vPreform;
+}
+
+
+//----------------ÀÛ‚Ìì‹Æ-----------------------
+if( $$return == "0" || $$return == "70") {
+	title 1;
+	ddeexecute "exit";
+	endmacro;
+} else if( $$return == "10" || $$return == "20" ) {
+	if ( $$return == "10" ) call DantsukeSub;
+	else call DantoriSub;
+	if (!#Teisokuka) disabledraw;
+	enabledraw;
+} else if( $$return == "30" ) {
+	call FugoSub;
+} else if( $$return == "40" ) {
+	call YoyakuSub;
+} else if( $$return == "60" ) {
+	call Help;
+} else if( $$return == "90" ) {
+	call ConvSub;
+//	call Enumfile;
+} else if( $$return == "80" ) {
+	call TPSetteiSub;
+} else if( $$return == "100" ) {//”{Šp
+	$a="<FONT SIZE=6>";
+	$b="</FONT>";
+	call WorkSub $a,$b,"”{Šp";
+} else if( $$return == "110" ) {//‰ºü
+	$a="<U>";
+	$b="</U>";
+	call WorkSub $a,$b,"‰ºü";
+} else if( $$return == "120" ) {//ã•t
+	$a="<SUP>";
+	$b="</SUP>";
+	call WorkSub $a,$b,"ã•t";
+} else if( $$return == "130" ) {//‰º•t
+	$a="<SUB>";
+	$b="</SUB>";
+	call WorkSub $a,$b,"‰º•t";
+} else if( $$return == "140" ) {
+	replaceallfast "\n","<BR>\n",regular;
+} else if( $$return == "150" ) {
+	replaceallfast "<BR>\n","\n",regular;
+} else if( $$return == "50" ) {//Word‹N“®
+	if (!#Jikai) {
+		call WordSub $Word;
+		if ($vWord != $Word) {
+			writeinistr $Ini,"Hdpaso","Word",$vWord;
+			$Word=$vWord;
+		}
+	}
+	if (!selecting){
+		selectall;
+	} 
+	copy;
+//	if (#thinkyou<2) runsync2 $Word+" /n /mPASOadd";
+//	else runsync2 $Word+" /n /mPASOadd2";
+	runsync2 $Word+" /n /mPASOadd";
+	if (!result) message "winword.exe‚ªw’è‚Ì‰ÓŠ‚É‚ ‚è‚Ü‚¹‚ñ¡";
+} else if( $$return == "160" ) {//"
+	insert "&quot;";
+} else if( $$return == "170" ) {//&
+	insert "&amp;";
+} else if( $$return == "180" ) {//<
+	insert "&lt;";
+} else if( $$return == "190" ) {//>
+	insert "&gt;";
+} else if( $$return == "200" ) {//œŸ
+	$a="œ";
+	$b="Ÿ";
+	call WorkSub $a,$b,"œŸ•t‚¯";
+} else if( $$return == "210" ) { //html“ª
+	gofiletop;
+	insert "<HTML>\n<HEAD>\n<TITLE></TITLE>\n</HEAD>\n<BODY>\n";
+	if (#Preform==2) insert "<PRE>\n";
+} else if( $$return == "220" ) { //html”ö
+	gofileend;
+	if (#Preform==2) insert "</PRE>\n";
+	insert "</BODY>\n</HTML>\n";
+}	
+if(#ToMenu == 0 && #FFF == 0) {
+	title 1;
+	ddeexecute "exit";
+//	if (!result){
+//		message "ƒ}ƒNƒƒT[ƒo‚ÌØ‚è—£‚µ‚É¸”s‚µ‚Ü‚µ‚½!";
+//	}
+	endmacro; 
+}
+goto Main;
+
+
+//---------ˆÈ‰ºAƒTƒuƒ‹[ƒ`ƒ“ŒQ-------------------
+
+WordSub:
+	ddepoke "newdialog", "51, MS-Word—§ã‚°İ’è";
+	ddepoke "newcontrol", "edit,Word,"+$$1;
+	ddepoke "newcontrol", "check,Jikai, ¡ŒãA‚±‚Ìƒ_ƒCƒAƒƒO‚ğ•\¦‚µ‚È‚¢(&M)";
+	ddepoke "default", str(##2);
+	ddepoke "newcontrol", "okcancel";
+
+	call MakeDialog;
+	
+	#vJikai=val(dderequest("getstate Jikai"));
+	$vWord=dderequest("getstring Word");
+	
+	if( $$return == "0") goto Main;
+	return;
+
+Claim:
+	#SeiKazuWork=#SeiKazu;
+	#i=1;
+	while( #SeiKazuWork > 0 ) {
+		if (#Shinkyu==0) insert "@@";
+		insert "y¿‹€";
+		insertfix str(#i);
+		beginsel;
+		if (#i>99) right 3; else if (#i>9) right 2; else right;
+		tozenkakuhira;
+		escape;
+		insert "z";
+		if (#Shinkyu>1) insert $BR;
+		if (#i==1) insert "@‚ğ“Á’¥‚Æ‚·‚é"+$Hakomei+"B"+$BR;
+		else if (#i==2) insert  "@¿‹€‚P‹LÚ‚Ì"+$Hakomei+"B"+$BR;
+		else insert "@¿‹€‹LÚ‚Ì"+$Hakomei+"B"+$BR;
+		#i=#i+1;
+		#SeiKazuWork = #SeiKazuWork - 1;
+	}	
+return;
+
+Help:
+	ddepoke "newdialog", "60,help";
+	ddepoke "newcontrol", "list,MyListbox1,";
+	ddepoke "item", "š’i—”Ô†•t‚¯";
+	ddepoke "item", "@@–¾×‘‚ÌŠY“–‚·‚é—“‚ÉAy‚O‚O‚O‚Pz“™A˜A‘±‚Ì’i—”Ô†‚ğ•t‚¯‚éB";
+	ddepoke "item", "@@’i—”Ô†•t‚¯‚·‚éŠî€‚ÍAƒ‰ƒWƒIƒ{ƒ^ƒ“‚Å‘I‘ğB";
+	ddepoke "item", "";
+	ddepoke "item", "@@®Ay“Á‹–•¶Œ£zy”ñ“Á‹–•¶Œ£z‚Ì”Ô†‚ÍA’i—”Ô†•t‚¯‚É©“®";
+	ddepoke "item", "@@“I‚Éƒiƒ“ƒoƒŠƒ“ƒOAƒŠƒiƒ“ƒoƒŠƒ“ƒO‚³‚ê‚éB";
+	ddepoke "item", "";
+	ddepoke "item", "@@‘ğˆê‘I‘ğ(’i—‚Ì“ª‚ª‘SŠp½Íß°½‚È‚ç^‘SŠp½Íß°½‚Å‚È‚­‚Ä‚à•t‚¯‚é)";
+	ddepoke "item", "";
+	ddepoke "item", "@@’Ç‰ÁƒIƒvƒVƒ‡ƒ“";
+	ddepoke "item", "";
+	ddepoke "item", "@@‡@’i“ª‚ª—A@A*A–‚È‚ç•t‚¯‚È‚¢iˆ—Œã—–@*Á‹j";
+	ddepoke "item", "@@‡A‘O’i––”ö‚ªuBv‚ÅI‚í‚Á‚Ä‚È‚­‚Ä‚Í•t‚¯‚È‚¢";;
+	ddepoke "item", "";
+	ddepoke "item", "   ’A‚µAŠù‚É’i—”Ô†•t‚¯‚ª‚³‚ê‚Ä‚¢‚éê‡‚É‚ÍA•t‚¯‚ç‚ê‚Ä‚¢‚é’i";
+	ddepoke "item", "   —”Ô†‚ÌƒŠƒiƒ“ƒoƒŠƒ“ƒO‚ğs‚¤BŠ®‘S‚É’i—”Ô†‚Ì•t‚¯‘Ö‚¦‚ğ–]‚Ş";
+	ddepoke "item","@@ê‡A’i—”Ô†æ‚è‚µ‚Ä‚©‚çs‚¤By‘—Ş–¼z“™AŠe—“‚Ì—L–³‚ğƒ`";
+	ddepoke "item","@@ƒFƒbƒN‚µA–³‚¢ê‡‚É‚Íƒ_ƒCƒAƒƒO‚Åw“EByÚ×‚Èà–¾z‚Ì—“‚ª";
+	ddepoke "item","    ‚È‚¢ê‡Aì‹Æ‚ğ’†~‚·‚éB";
+	ddepoke "item","";
+	ddepoke "item","  @html•¶‘‚Å‚Ì’i—”Ô†•t‚¯‚ÍA•¶‘’†‚Ì‚¢‚¸‚ê‚©‚Ì‰ÓŠ‚ÉŠù‚É<BR>‚ª";
+	ddepoke "item","    ‚ ‚ê‚ÎA<BR>•t‚«‚Å’i—”Ô†‚ğ•t‚¯‚éB’A‚µA•¶‘’†‚Ì‚¢‚¸‚ê‚©‚Ì‰Ó";
+	ddepoke "item","    Š‚É<PRE>‚ª‚ ‚éê‡‚É‚ÍA<BR>‚Í•t‚¯‚È‚¢B‚¾‚©‚çA•¶‘’†‚Ì•¡”";
+	ddepoke "item","    ”‰ÓŠ‚É”ò‚Ñ”ò‚Ñ‚Å<PRE></PRE>‚ª‚ ‚éê‡‚É‚ÍAŒ»İ‘Î‰‚µ‚Ä‚¢‚È‚¢B";
+	ddepoke "item","";
+	ddepoke "item","š’i—”Ô†æ‚è";
+	ddepoke "item","@@’i—”Ô†‚ğˆêŠ‡íœB";
+	ddepoke "item","";
+	ddepoke "item","š•„†•\‚Ìì¬";
+	ddepoke "item","@@•„†‚Ìˆê——•\ì¬B•„†‚Æ•”•i–¼‚Æ‚Ì‘Î‰A•\Œ»‚¸‚ê‚ªƒ`ƒFƒbƒN‚Å";
+	ddepoke "item","@@‚«‚éBŒ´•¶‚ÌÅŒã‚É’£‚è‚Ş‚©^–”‚Í•ÊÌ§²Ù‚É‚·‚é‚©Aƒƒjƒ…[‰E";
+	ddepoke "item","    —“‚ÌƒIƒvƒVƒ‡ƒ“‚Å‘I‘ğ‚Å‚«‚éB‚Ç‚¤‚µ‚Ä‚à•„†•\‚ÉƒSƒ~ƒf[ƒ^‚ª¬";
+	ddepoke "item","    “ü‚·‚é‚©‚ç“K‹Xíœ‚Ì‚±‚ÆBŠî–{“I‚É‚Ğ‚ç‚ª‚È‚ğ’PŒê‚Ì‹æØ‚è‚Æ‚µ";
+	ddepoke "item","    ‚Ä‚¢‚éB";
+	ddepoke "item","";
+	ddepoke "item","š—v–ñ‘Œv”";
+	ddepoke "item","    —v–ñ‘‚Ì•¶š”‚ğ”‚¦‚éB”¼Šp‚Í‚OD‚T•¶š‚Æ‚İ‚È‚·BŒ‹‰Ê‚ğiŠî";
+	ddepoke "item","    €‚ğ‰z‚¦‚½ê‡‚É‚ÍA‰z‚¦‚½”‚àjƒ_ƒCƒAƒƒO‚Å•\¦By—v–ñ‘z";
+	ddepoke "item","    ‚Ì—“‚ª‚È‚¢ê‡‚ÍAƒ_ƒCƒAƒƒO‚ğo‚µ‚Äì‹Æ‚ğ’†~‚·‚éB";
+	ddepoke "item","    ƒ^ƒO<BR>A</PRE>A</BODY>A</HTML>‚ÍŒv”‚µ‚È‚¢B";
+	ddepoke "item","    ”ÍˆÍ‘I‘ğ‚µ‚Ä‚¢‚éê‡‚ÍA‚»‚Ì•”•ª‚Ì•¶š”‚ğ”‚¦‚éB";
+	ddepoke "item","";
+	ddepoke "item","šÃİÌßÚ°Ä";
+	ddepoke "item","@@Šè‘E–¾×‘E}–ÊE—v–ñ‘‚Ìƒeƒ“ƒvƒŒ[ƒgBƒ_ƒCƒAƒƒO‚ªo‚é‚Ì";
+	ddepoke "item","    ‚ÅA“ÁŠèA‘ÛoŠèAÀŠè‚ğƒ‰ƒWƒIƒ{ƒ^ƒ“‘I‘ğB‘ã—l‹y‚Ñ‘I”C‘ã—l‚ÍA";
+	ddepoke "item","@@•K—v‚É‰‚¶‚Äƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ğƒNƒŠƒbƒN‚µA¯•Ê”Ô†‹y‚Ñ–¼‚ğ";
+	ddepoke "item","@@‘SŠp‚Å“ü—Í‚·‚éB";
+	ddepoke "item","@@";
+	ddepoke "item","@@}‚ÌŠg’£q(bmp or gif)‚Í‘I‘ğA}‚Ì”‚ğ“ü—ÍB";
+	ddepoke "item","@@}‚Ì–¼‘O‚ÍA“–ŠYÌ§²Ù–¼ŠîŠ²‰ºH•¶š+Õ°»Şw’èš+˜A”Ô+}‚ÌŠg’£q‚Å";
+	ddepoke "item","@@ˆê˜A‚É•t‚¯‚ç‚êAÌ§²Ù–¼ŠîŠ²iŠg’£qˆÈŠO‚Ì•”•ªj‚Ì‰º‰½•¶š‚ğ‰Á‚¦";
+	ddepoke "item","@@‚é‚©A˜A”Ô‚ğ1–”‚Í01–”‚Í001‚Ån‚ß‚é‚©‘I‘ğ‰ÂB–¾×‘‚Ì‚İA}–Ê‚Ì";
+	ddepoke "item","@@‚İA—v–ñ‘‚Ì‚İ“™A‘I‘ğ‰ÂB";
+	ddepoke "item","";
+	ddepoke "item","šHTML“ªE”ö";
+	ddepoke "item","    HTML‚Ì“ª‚Ì•”•ªA”ö‚Ì•”•ª‚Ìƒ^ƒO“ü—Í";
+	ddepoke "item","";
+	ddepoke "item","š”{ŠpA‰ºüAã•tA‰º•tAœŸ•t";
+	ddepoke "item","    ”ÍˆÍw’è‚µ‚½ó‘Ô‚Åƒ}ƒNƒ‚ğ—§‚¿ã‚°‚Ä‚ ‚ê‚ÎA‚»‚Ì”ÍˆÍ‚Ì—¼";
+	ddepoke "item","    ’[‚ÉAŠY“–‚·‚éƒ^ƒO‚ğ“ü‚ê‚éB”ÍˆÍw’è‚µ‚Ä‚¢‚È‚¯‚ê‚ÎAu‚»";
+	ddepoke "item","    ‚Ì‚Ü‚Üƒ^ƒO‚ğ“ü‚ê‚é‚©A‚»‚ê‚Æ‚à”ÍˆÍw’è‚·‚é‚©v‚ğ•·‚¢‚Ä—ˆ";
+	ddepoke "item","    ‚éBŒãÒi‚mj‚ğ‘I‚Ô‚ÆAƒ}ƒNƒ‚ª—§‚¿ã‚ª‚Á‚½‚Ü‚ÜAƒJ[ƒ\";
+	ddepoke "item","    ƒ‹‚ğ“®‚©‚µ‚Ä”ÍˆÍ‚ğ‘I‚×‚éB“¯ˆêí‚Ìƒ^ƒO‚ğ˜A‘±“ü—Í‚Å‚«‚éB";
+	ddepoke "item","    ˜A‘±“ü—Í‚ğI‚¦‚é‚É‚ÍAƒJ[ƒ\ƒ‹‚ğ“®‚©‚³‚¸‚É‚Q‰ñƒŠƒ^[ƒ“ƒL[";
+	ddepoke "item","    ‚ğ‰Ÿ‚·B";
+	ddepoke "item","    POKAN‚³‚ñ‚ÌGŠÛ—p–¾×‘ì¬x‰‡ƒ}ƒNƒ Asispat.mac‚ğ—˜—p‚·‚é";
+	ddepoke "item","    ‚Ì‚É•Ö—˜‚È‚æ‚¤Aœ‚ÆŸ‚ğAã‹L“¯—l‚É˜A‘±“ü—Í‚Å‚«‚é‚æ‚¤‚É‚µ‚½B";
+	ddepoke "item","";
+	ddepoke "item","š<BR>•t";
+	ddepoke "item","@@‰üsƒ}[ƒN‚ğ<BR>{‰üsƒ}[ƒN‚ÉˆêŠ‡•ÏŠ·";
+	ddepoke "item","";
+	ddepoke "item","š<BR>æ";
+	ddepoke "item","@@<BR>{‰üsƒ}[ƒN‚ğ‰üsƒ}[ƒN‚ÉˆêŠ‡•ÏŠ·";
+	ddepoke "item","";
+	ddepoke "item","šWord—§ã‚°";
+	ddepoke "item","    Œ»İŠJ‚¢‚Ä‚¢‚éGŠÛ•¶‘‚Ì“à—e‚ğA”ÍˆÍ‘I‘ğ‚³‚ê‚Ä‚¢‚ê‚ÎA‚»‚Ì•”•ª";
+	ddepoke "item","    ‚¾‚¯A”ÍˆÍ‘I‘ğ‚³‚ê‚Ä‚¢‚È‚¢‚È‚ç‘S•¶AƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[‚µ‚ÄA";
+	ddepoke "item","    ‚»‚ê‚ª“Á‹–’¡d—l‚ÌHTML•¶‘‚È‚ç‚Îƒ^ƒO‚ğæ‚Á‚½Œ`‚É‚µ";
+	ddepoke "item","    MS-Wordã‚Ånewppless.dot‚ğ—p‚¢‚½V‹K•¶‘‚Æ‚µ‚ÄƒI[ƒvƒ“‚·‚éB";
+	ddepoke "item","    (1)MS-Word‚ÌTemplateƒtƒHƒ‹ƒ_‚Énewpples.dot‚ªƒRƒs[‚³‚ê‚Ä‚¢‚éB";
+	ddepoke "item","    (2)Word‚ÌŠİ‚É‚Â‚¢‚Ä‚Ìƒ_ƒCƒAƒƒO‚É³‚µ‚­“š‚¦‚Ä‚¢‚éB";
+	ddepoke "item","       ‚à‚µA¡Œã‚±‚Ìƒ_ƒCƒAƒƒO‚ğ•\¦‚µ‚È‚¢‚ÉAƒ`ƒFƒbƒNƒIƒ“‚µ‚½Œã‚ÅA";
+	ddepoke "item","       Šİ‚É‚Â‚¢‚Ä‚Ìƒf[ƒ^‚ğ•ÏX‚µ‚½‚¢‚È‚çAƒ}ƒNƒƒtƒHƒ‹ƒ_‚É‚ ‚é";
+	ddepoke "item","       ƒtƒ@ƒCƒ‹marpat.ini‚ğŠJ‚¢‚ÄA[Hdpaso]‚ÌWord=‚Ì‰E—“‚ÉMS-WORD‚ÌŠİ";
+	ddepoke "item","       ‚ğ³‚µ‚­“ü—Í‚·‚é‚©AJikai=‚Ì‰E—“‚ğ0‚É‚µ‚Äƒ_ƒCƒAƒƒOÄŠJ‰Â‚É‚·‚éB";
+	ddepoke "item","    (3)MS-Word‚ÉPASOaddƒ}ƒNƒ‚ªƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚Ä‚¢‚éB";
+	ddepoke "item","    ‚¤‚Ü‚­MS-Word‚ª—§‚¿ã‚ª‚ç‚È‚¢ê‡A‚±‚ê‚ç(1)(2)(3)‚ğŠm”F‚·‚é‚±‚ÆB";
+	ddepoke "item","";
+	ddepoke "item","š\"ƒ_ƒuƒ‹ˆø—p•„A&ƒAƒ“ƒpƒTƒ“ƒhAƒ‚æ‚è‘åA„‚æ‚è‘å";
+	ddepoke "item","@@‚±‚ê‚ç‚Ì‹L†‚Í‚g‚s‚l‚k‚Å‚Í‚»‚Ì‚Ü‚Üg‚¦‚È‚¢B‘Ö‚í‚è‚ÉA";
+	ddepoke "item","@@@@&quot;&amp;&lt;&gt;";
+	ddepoke "item","@@‚ğg‚¤B‚±‚ê‚ç‚ğ“ü—Í‚·‚éB";
+	ddepoke "item","";
+	ddepoke "item","š‚g‚d‚k‚o";
+	ddepoke "item","    ¡A‚²——‚É‚È‚Á‚Ä‚¢‚é‚±‚êB";
+	ddepoke "item","";
+	ddepoke "item","š‚»‚Ì‘¼";
+	ddepoke "item","    ƒ}ƒNƒˆ—ŒãAƒƒjƒ…[‚É‚à‚Ç‚é‚©‚Ç‚¤‚©A–”Aƒ}ƒNƒì‹Æ“r’†‚Ì";
+	ddepoke "item","    ‰æ–Ê‚Ìˆê•”È—ª‚ğs‚í‚È‚¢‚Å‚¶‚Á‚­‚èì‹Æ‚ğŒ©‚é‚©‚Ç‚¤‚©A<BR>‚©";
+	ddepoke "item","    ƒvƒŒƒtƒH[ƒ}ƒbƒgƒ^ƒO‚ğ—p‚¢‚é‚©‚ğƒIƒvƒVƒ‡ƒ“‚Å‘I‘ğ‰Â”\B";
+	ddepoke "height", "25";
+	ddepoke "newcontrol", "text,,";//ƒ_ƒ~[
+	ddepoke "part", "20";
+	ddepoke "newcontrol", "button,,–ß‚é(&B)";
+	ddepoke "notify", "555";
+	ddepoke "part", "20";
+	ddepoke "newcontrol", "text,,";//ƒ_ƒ~[
+	call MakeDialog;
+	if( $$return == "555") goto Main;
+return;
+
+ZunameSub:
+ddeexecute "enumfile *.bmp";
+	#i = 0;
+	while(1) {
+		$name[#i] = dderequest( "findnext" );
+		if( $name[#i] == "" ) break;
+		#i = #i + 1;
+	}
+return;
+
+DantsukeSub:
+//–¾×‘‚ÌŠY“–‚·‚é—“‚ÉAy‚O‚O‚O‚Pz“™’i—”Ô†•t‚¯B
+//’A‚µAŠù‚É’i—”Ô†•t‚¯‚³‚ê‚Ä‚¢‚éê‡‚É‚ÍA‚»‚ê‚É]‚¢yz“à‚ğƒŠƒiƒ“ƒoƒŠƒ“ƒO‚·‚éB
+	if (updated) save;//XV‚³‚ê‚Ä‚¢‚ê‚ÎA•¶‘‚ğ•Û‘¶‚µ‚Ä‚©‚çˆ—
+	if (!#Teisokuka) disabledraw;
+	replaceallfast "y[‚O-‚X]+z","yz", regular;
+	if (!result){
+		//’i—”Ô†‚ª–¢‘¶
+		#linefirst=0;
+		#linelast=0;
+		$list[0]="y‘—Ş–¼z";
+		$list[1]="‚Ì–¼Ìz";
+		$list[2]="¿‹‚Ì”ÍˆÍz";
+		$list[3]="‚ÌÚ×‚Èà–¾z";
+		$list[4]="‹Zp•ª–ìz";
+		$list[5]="y]—ˆ‚Ì‹Zpz";
+		$list[6]="‚ª‰ğŒˆ‚µ‚æ‚¤‚Æ‚·‚é‰Û‘èz";
+		$list[7]="y‰Û‘è‚ğ‰ğŒˆ‚·‚é‚½‚ß‚Ìè’iz";
+		$list[8]="‚ÌÀ{‚ÌŒ`‘Ôz";
+		$list[9]="‚ÌŒø‰Êz";
+		$list[10]="y}–Ê‚ÌŠÈ’P‚Èà–¾z";
+		$list[11]="y•„†‚Ìà–¾z";
+		$list[12]="<BR>";
+		$list[13]="<PRE>";
+		$list[14]="y‹Zp•ª–ìz";
+		$list[15]="‚ÌŠT—vz";
+
+		#i=0;
+		gofileend;
+		#lineend=lineno;
+		#linelast=0;
+		gofileend;
+		searchup $list[3];
+    if (result) #new=0;
+		gofileend;
+		searchup $list[14];
+    if (result){
+  		gofileend;
+	  	searchup $list[15];
+      if (result) #new=2;
+      else #new=1;
+    }else{
+			message "uy‹Zp•ª–ìzv‚àu‚ÌÚ×‚Èà–¾zv‚à‚È‚¢‚Ì‚Åì‹Æ’†~";
+			enabledraw;
+			return;
+    }
+
+		if (#new==0){//‚ÌÚ×‚Èà–¾z‚ª‚ ‚é‚©‚ç‹Œ‘®
+			while (#i<14){
+				gofileend;
+				searchup $list[#i];
+				if (result==0 && #i<12) message $list[#i]+"‚ª‚È‚¢";
+				else if (#i==3) #linefirst=lineno;
+				else if (#i==10) #linelast=lineno-1;
+				else if (#i==12 && result==1) #BRAri=1;
+				else if (#i==13 && result==1) #PREAri=1;
+				//else setmark;
+				#i=#i+1;
+			}
+		}else if (#new==1){//V‘®
+			$list[0]="y‘—Ş–¼z[ @]*–¾×‘";
+			$list[1]="‚Ì–¼Ìz";
+			$list[2]="y‹Zp•ª–ìz";
+			$list[3]="y”wŒi‹Zpz";
+			$list[4]="y[”ñ]*“Á‹–•¶Œ£";
+			$list[5]="‚ÌŠJ¦z";
+			$list[6]="‚ª‰ğŒˆ‚µ‚æ‚¤‚Æ‚·‚é‰Û‘èz";
+			$list[7]="y‰Û‘è‚ğ‰ğŒˆ‚·‚é‚½‚ß‚Ìè’iz";
+			$list[8]="‚ÌŒø‰Êz";
+			$list[9]="‚ğÀ{‚·‚é‚½‚ß‚ÌÅ—Ç‚ÌŒ`‘Ôz";
+			$list[10]="yÀ{—á";
+			$list[11]="yY‹Æã‚Ì—˜—p‰Â”\«z";
+			$list[12]="y}–Ê‚ÌŠÈ’P‚Èà–¾z";
+			$list[13]="y•„†‚Ìà–¾z";
+			$list[14]="<BR>";
+			$list[15]="<PRE>";
+			while (#i<16){
+				gofileend;
+				searchup $list[#i], regular;
+				if (result==0 && #i<14 && #i!=10) message $list[#i]+"‚ª‚È‚¢";
+				else if (#i==2) #linefirst=lineno;
+				else if (#i==12) #linelast=lineno-1;
+				else if (#i==14 && result==1) #BRAri=1;
+				else if (#i==15 && result==1) #PREAri=1;
+				//else setmark;
+				#i=#i+1;
+			}
+		}else{
+			$list[0]="y‘—Ş–¼z[ @]*–¾×‘";
+			$list[1]="‚Ì–¼Ìz";
+			$list[2]="y‹Zp•ª–ìz";
+			$list[3]="y”wŒi‹Zpz";
+			$list[4]="yæs‹Zp•¶Œ£z";
+			$list[5]="y[”ñ]*“Á‹–•¶Œ£z";
+			$list[6]="‚ÌŠT—vz";
+			$list[7]="‚ª‰ğŒˆ‚µ‚æ‚¤‚Æ‚·‚é‰Û‘èz";
+			$list[8]="y‰Û‘è‚ğ‰ğŒˆ‚·‚é‚½‚ß‚Ìè’iz";
+			$list[9]="‚ÌŒø‰Êz";
+			$list[10]="y}–Ê‚ÌŠÈ’P‚Èà–¾z";
+			$list[11]="‚ğÀ{‚·‚é‚½‚ß‚ÌŒ`‘Ôz";
+			$list[12]="yÀ{—á";
+			$list[13]="yY‹Æã‚Ì—˜—p‰Â”\«z";
+			$list[14]="y•„†‚Ìà–¾z";
+			$list[15]="<BR>";
+			$list[16]="<PRE>";
+			while (#i<17){
+				gofileend;
+				searchup $list[#i], regular;
+				if (result==0 && #i<15 && #i!=12) message $list[#i]+"‚ª‚È‚¢";
+				else if (#i==2) #linefirst=lineno;
+				else if (#i==14) #linelast=lineno-1;
+				else if (#i==15 && result==1) #BRAri=1;
+				else if (#i==16 && result==1) #PREAri=1;
+				//else setmark;
+				#i=#i+1;
+			}
+    }
+
+		if (#linelast==0) #linelast=#lineend;
+		movetolineno 1, #linefirst;
+		call banjunbiSub #BRAri, #PREAri,#new;//’i—”Ô†•t‚¯‚Ì€”õ
+	}
+	gofiletop;
+	#i=1;
+	#currentline=0;
+	while (1) {
+	title str(#i)+"’i–Ú";
+	searchdown "yz";
+		if (!result){
+			#i=#i-1;
+			 break;
+		}
+		if (searchmode==1) escape;
+		#currentline=lineno;
+		right;
+		if (#i<10){
+			insert "‚O‚O‚O";
+			insertfix str(#i);
+			beginsel;
+			right;
+		}else if (#i<100){
+			insert "‚O‚O";
+			insertfix str(#i);
+			beginsel;
+			right 2;
+		}else if (#i<1000){
+			insert "‚O";
+			insertfix str(#i);
+			beginsel;
+			right 3;
+		}else {
+			insertfix str(#i);
+			beginsel;
+			right 4;
+		}
+		tozenkakuhira;
+		escape;
+		#i=#i+1;
+	}
+	enabledraw;
+	title "‘S•”‚Å"+str(#i)+"’iˆ—‚µ‚Ü‚µ‚½";
+	return #i;
+
+banjunbiSub:
+	title "’i—”Ô†•t‚¯€”õ’†I";
+	call KakopreSub "“Á‹–•¶Œ£",4;
+	call KakopreSub "”ñ“Á‹–•¶Œ£",4;
+	call TokuSub;
+	movetolineno 1, #linefirst;
+	down;
+	if (##1==1 && ##2==0) {
+		$BR="<BR>\n";
+		#BRN=5;
+	}else {
+		$BR="\n";
+		#BRN=1;
+	}
+	if (##3==0) {//‹Œ‘®
+		insert "@@@yz"+$BR;
+		while (1){
+			searchdown "\n", regular;
+			if (!result) break;
+			#currentline=lineno;
+			if (#linelast<#currentline) break;
+			left #BRN;
+			$key=gettext(x,y,x+2,y);
+			right #BRN;
+			if (#Zenmaru==1 && $key!="B") continue;
+			right;//Ÿ‚Ì’i“ª
+			if(!result) break;
+			$key=gettext(x,y, x+2,y);
+			$key2=gettext(x,y, x+8,y);
+			if ($key2=="“Á“Á“Á“Á") {
+				#tokutoku=1;
+				continue;
+			}
+			if ($Dansin=="@"){
+				if ($key!="@")	continue;
+			} else if (#Kigou==1){	
+				$key2=gettext(x,y,x+1,y);
+				if ($key=="—" || $key2=="@" || $key=="–" || $key2=="*") continue;
+			}
+			left 1+#BRN;
+			if (gettext(x,y, x+2,y)=="z") right #BRN;
+			else {
+				right #BRN;
+				if (##1==1 && ##2==0) insert "\n@@@yz<BR>";
+				else insert "\n@@@yz";
+				#linelast=#linelast+1;
+			}
+		}
+	}else if (##3==1){//V‘®
+		insert "@yz"+$BR;
+		while (1){
+			searchdown "\n", regular;
+			if (!result) break;
+			#currentline=lineno;
+//			if (#linelast<#currentline) break;
+			left #BRN;
+			$epkey=gettext(x,y,x+2,y);
+			right #BRN;
+			right;//Ÿ‚Ì’i“ª
+			if(!result) break;
+			$spkey=gettext(x,y, x+2,y);
+			$key2=gettext(x,y,x+1,y);
+			$spl=gettext(0,y, linelen,y);
+			if (strstr($spl,"“Á“Á“Á“Á")>-1) {
+				#tokutoku=1;
+				continue;
+			}
+			if (strstr(toupper($spl),"<IMG SRC=")>-1) {
+				continue;
+			}
+			if (strstr($spl,"y‘—Ş–¼z")>-1) break;
+			if (strstr($spl,"y}–Ê‚ÌŠÈ’P‚Èà–¾z")>-1){
+				golineend2;
+				right;
+				insert "@yz"+$BR;
+				searchdown "y•„†‚Ìà–¾z", regular;
+				if (!result) break;
+				golineend2;
+				right;
+				insert "@yz"+$BR;
+				searchdown "‚½‚ß‚ÌÅ—Ç‚ÌŒ`‘Ôz", regular;
+				if (!result) break;
+				golineend2;
+				right;
+				insert "@yz"+$BR;
+			}
+			if ($Dansin=="@"){
+				if ($spkey!="@")	continue;
+			} else if (#Kigou==1){	
+//				$key2=gettext(x,y,x+1,y);
+				if ($key=="—" || $key2=="@" || $key=="–" || $key2=="*") continue;
+			}
+			if (strstr($spl,"y")<0 || strstr($spl,"y”")>0|| strstr($spl,"y‰»")>0|| strstr($spl,"y•\")>0){
+				if (#Zenmaru==1 && $epkey!="B") continue;
+				if (##1==1 && ##2==0) insert "@yz<BR>\n";
+				else insert "@yz\n";
+				#linelast=#linelast+1;
+			}
+		}
+	}else{//O‹É‹¤’Ê‘®
+		insert "@yz"+$BR;
+		while (1){
+			searchdown "\n", regular;
+			if (!result) break;
+			#currentline=lineno;
+//			if (#linelast<#currentline) break;
+			left #BRN;
+			$epkey=gettext(x,y,x+2,y);
+			right #BRN;
+			right;//Ÿ‚Ì’i“ª
+			if(!result) break;
+			$spkey=gettext(x,y, x+2,y);
+			$key2=gettext(x,y,x+1,y);
+			$spl=gettext(0,y, linelen,y);
+			if (strstr($spl,"“Á“Á“Á“Á")>-1) {
+				#tokutoku=1;
+				continue;
+			}
+			if (strstr(toupper($spl),"<IMG SRC=")>-1) {
+				continue;
+			}
+			if (strstr($spl,"y•„†‚Ìà–¾z")>-1) break;
+			if (strstr($spl,"y‘—Ş–¼z")>-1) break;
+			if (strstr($spl,"y}–Ê‚ÌŠÈ’P‚Èà–¾z")>-1){
+				golineend2;
+				right;
+				insert "@yz"+$BR;
+				searchdown "‚½‚ß‚ÌŒ`‘Ôz", regular;
+				if (!result) break;
+				golineend2;
+				right;
+				insert "@yz"+$BR;
+			}
+			if ($Dansin=="@"){
+				if ($spkey!="@")	continue;
+			} else if (#Kigou==1){	
+//				$key2=gettext(x,y,x+1,y);
+				if ($key=="—" || $key2=="@" || $key=="–" || $key2=="*") continue;
+			}
+			if (strstr($spl,"y")<0 || strstr($spl,"y”")>0|| strstr($spl,"y‰»")>0|| strstr($spl,"y•\")>0){
+				if (#Zenmaru==1 && $epkey!="B") continue;
+				if (##1==1 && ##2==0) insert "@yz<BR>\n";
+				else insert "@yz\n";
+				#linelast=#linelast+1;
+			}
+		}
+  	movetolineno 1, #linefirst;
+	  down;
+  	searchdown "y•„†‚Ìà–¾z", regular;
+  	if (result){
+		 golineend2;
+		 right;
+		 insert "@yz"+$BR;
+    }
+  	searchdown "yó‘õ”Ô†z", regular;
+  	if (result){
+		 golineend2;
+		 right;
+		 insert "@yz"+$BR;
+    }
+  }
+	if (#Kigou==1){
+		replaceallfast "^[@—*–]","",regular;
+	}
+	if (#tokutoku==1) replaceallfast "“Á“Á“Á“Á","";
+  if (##3==2){
+	  call Kakopls0Sub "“Á‹–•¶Œ£";
+	  call Kakopls0Sub "”ñ“Á‹–•¶Œ£";
+  } else {
+	  call KakoplsSub "“Á‹–•¶Œ£";
+	  call KakoplsSub "”ñ“Á‹–•¶Œ£";
+  }
+	return ##return;
+
+KakopreSub:
+	$data = "y" + $$1 + "z";
+	#i=##2;
+	$data2="";
+	while (1){
+		if (#i==0) break;
+		$data2="@"+$data2;
+		#i=#i-1;
+	}
+	$data2 = $data2 + $data;
+	replaceallfast "^" + $$1, $data2, regular;
+	return;
+
+KakoplsSub:
+	#length=strlen($$1);
+	$data = "y" + $$1 + "z";
+	replaceallfast "y" + $$1 + "[‚O-‚X0-9]+z", $data, regular;
+	gofiletop;
+  #i = 1;
+	while (1){
+		searchdown $data;
+		if (!result){
+			#i=#i-1;
+			break;
+		}
+		if (searchmode==1) escape;
+		right;
+		moveto x+#length,y;
+		insertfix str(#i);
+		beginsel;
+		if (#i<10){
+			right;
+		}else if (#i<100){
+			right 2;
+		}else if (#i<1000){
+			right 3;
+		}else {
+			right 4;
+		}
+		tozenkakuhira;
+		escape;
+		#i=#i+1;
+	}
+	return #i;
+
+Kakopls0Sub:
+	#length=strlen($$1);
+	$data = "y" + $$1 + "z";
+	replaceallfast "y" + $$1 + "[‚O-‚X0-9]+z", $data, regular;
+	gofiletop;
+  #i = 0;
+	while (1){
+		searchdown $data;
+		if (!result){
+			#i=#i-1;
+			break;
+		}
+    if (#i==0){
+  	 golineend2;
+		 right;
+		 insert "@yz"+$BR;
+      #i=1;
+      continue;
+    }
+		if (searchmode==1) escape;
+		right;
+		moveto x+#length,y;
+		insertfix str(#i);
+		beginsel;
+		if (#i<10){
+			right;
+		}else if (#i<100){
+			right 2;
+		}else if (#i<1000){
+			right 3;
+		}else {
+			right 4;
+		}
+		tozenkakuhira;
+		escape;
+		#i=#i+1;
+	}
+	return #i;
+
+DantoriSub:
+//’i—”Ô†‚ğˆêŠ‡íœ
+	if (!#Teisokuka) disabledraw;
+	if (updated) save;//XV‚³‚ê‚Ä‚¢‚ê‚ÎA•¶‘‚ğ•Û‘¶‚µ‚Ä‚©‚çˆ—
+	call _Dantri;
+	#i=##return;
+	return #i;
+
+_Dantri:
+	gofiletop;
+	#i=0;
+	while(1){
+	title str(#i)+"ŒÂíœ";
+	searchdown "y[‚O-‚X0-9]*z",regular;
+	if(!result) break;
+	deleteline;
+	#i=#i+1;
+	}
+	enabledraw;
+	title "íœ‚µ‚½’i—”Ô†‚Í"+str(#i)+"ŒÂ‚Å‚·B";
+	return #i;
+
+FugoSub:
+//•„†•\‚Ìì¬
+//Šî–{“I‚ÉAŠ¿š‚ÆƒJƒ^ƒJƒi‚Æ‰p”š‚Ì‘g‚İ‡‚í‚¹‚ğE‚¢ã‚°‚é
+#FFF=1;
+$base=filename;
+if (updated) save;//Œ´•¶‚ªXV‚³‚ê‚Ä‚¢‚ê‚Î•Û‘¶‚µ‚Ä‚©‚çAì‹ÆŠJn
+if (#Fugohyolong){
+	$FFile=leftstr($base,strlen($base)-4)+"ÌºŞ³Ë®³.txt";
+}else $FFile="ÌºŞ³Ë®³.txt";
+saveas $FFile;
+
+if (!#Teisokuka) disabledraw;
+disableinvert;
+	$list[0]="‹y‚Ñ|–”‚Í|[:F;G]";
+	$list[1]=",";
+	$list[2]="[”TŠ|-|`]";
+	$list[3]="ƒ¶ƒ¶ƒ¶";
+	$list[4]="y.*z|‘O‹L|ã‹L|ŠY";
+	$list[5]="";
+	$list[6]="(¿‹€|})[‚O-‚X‚`-‚š0-9A-Za-z]+";
+	$list[7]="";
+	$list[8]="|";
+	$list[9]="„`„`„`";
+	$list[10]="^";
+	$list[11]="ˆŸˆŸˆŸ";
+	$list[12]="Q";
+	$list[13]="ƒµƒµƒµ";
+	$list[14]="E";
+	$list[15]="îìîìîì";
+	$list[16]="[ˆŸ-îìƒ@-ƒ–[]+[‚Ÿ-‚ñ]?[ˆŸ-îìƒ@-ƒ–[i(]?[‚O-‚X‚`-‚š0-9A-Za-zƒŸ-„`.D,CA¤fh`]+[)j]*[^.D,CA¤`ˆŸ-îìƒ@-ƒ–]";	
+	$list[17]="[‚O-‚X‚`-‚š0-9A-Za-zƒŸ-„`,C.DA¤fh`]+[)j]*[^,CA¤`ˆŸ-îìƒ@-ƒ–]";
+	$list[18]="[^‚O-‚X‚`-‚š0-9A-Za-zƒŸ-„`fh)j]";
+	$list[19]="[ƒŸ-ƒÖ‚`-‚šA-z]*[ˆŸ-îìƒ@-ƒ–[]+[‚¿‚«‚İ‚µ‚¹‚í‚¯‚°‚è‚ß‚¸‚ê‚¢‚¦‚Äi(]*[ˆŸ-îìƒ@-ƒ–[i(‚¿‚«‚İ‚µ‚¹‚í‚¯‚°‚è‚ß‚¸‚ê‚¢‚¦‚Ä]?\\f[‚O-‚X0-9‚`-‚šA-Za-zƒŸ-„`][‚O-‚X0-9‚`-‚šA-Za-zƒŸ-„`.D,CA¤fh`)j]*";
+	$list[20]="[^Q‚O-‚š0-zƒŸ-ƒÖ`|ƒ@-ƒ–ˆŸ-ê[E‚¿‚«‚İ‚µ‚¹‚í‚¯‚°‚è‚ß‚¸‚ê‚¢‚¦‚Ä]*[ƒ@-ƒ–ˆŸ-ê[E‚¿‚«‚İ‚µ‚¹‚í‚¯‚°‚è‚ß‚¸‚ê‚¢‚¦‚Ä]+\\f[‚O-‚X0-9‚`-‚šA-Za-zƒŸ-„`][‚O-‚X0-9‚`-‚šA-Za-zƒŸ-„`.D,CA¤fh`)j]*";
+
+	#i=0;
+	while (#i<16){
+	title "’uŠ·:"+str(#replaced)+"   ‰ºˆ—’uŠ·ì‹Æ’†";
+		$find=$list[#i];
+		$replace=$list[#i+1];
+		replaceallfast $find, $replace, regular;
+		#replaced=#replaced+result;
+		#i=#i+2;
+	}
+gofiletop;
+#count=0;
+if (version>=300){
+	replaceallfast $list[20], "\\n_\\1@@@\\0\\n",regular;
+	replaceallfast "^[^_].*\\n", "",regular;
+	replaceallfast "^.+@@@\\f[‚¿‚«‚İ‚µ‚¹‚í‚¯‚°‚è‚ß‚¸‚ê‚¢‚¦‚Ä]+\\f.*","\\0\\2",regular;
+	replaceallfast "^.+@@@$","",regular;
+	replaceallfast "^_\\f[‚O-‚X0-9][‚O-‚X0-9][‚O-‚X0-9]\\f.*", "\\1\\2",regular;
+	replaceallfast "^_\\f[‚O-‚X0-9][‚O-‚X0-9]\\f.*", "@\\1\\2",regular;
+	replaceallfast "^_\\f[‚O-‚X0-9]\\f.*", "@@\\1\\2",regular;
+	replaceallfast "^_", "",regular;
+} else {
+	while (1){
+		title str(#count)+"   •„†•t‚«’PŒê”²‚«o‚µ’†";
+		beginsel;
+		searchdown $list[16], regular;
+		if (!result) gofileend;
+		delete;
+		beginsel;
+		searchdown $list[17], regular;
+		if (!result) {
+			escape;
+			break;
+		}
+		cut;
+		$L=gettext(x,y,x+1,y);
+		$LA=gettext(x,y,x+2,y);
+		$LB=gettext(x+2,y,x+4,y);
+		$LC=gettext(x+4,y,x+6,y);
+		#x=x;#y=y;
+		if ($L=="¤"||$LA=="A"||$L==","||$LA=="C") continue;
+		searchdown $list[18], regular;
+		if (!result) break;
+		#LA=0;#LB=0;#LC=0;
+		if ($LA>="‚O" && $LA<="‚X") #LA=1;
+		if ($LB>="‚O" && $LB<="‚X") #LB=1;
+		if ($LC>="‚O" && $LC<="‚X") #LC=1;
+		#cx=x;#cy=y;
+		if (#LA&&#LB&&#LC) {moveto #x,#y;insert "";}//Œ…‘µ‚¦
+		else if (#LA&&#LB) {moveto #x,#y;insert "@";#cx=#cx+2;}
+		else if (#LA) {moveto #x,#y;insert "@@";#cx=#cx+4;}
+		moveto #cx,#cy;
+		#count=#count+1;
+		//insert "\t";
+		insert "@@@";
+		paste;
+		insert "\n";
+	}
+}
+replaceallfast "ƒ¶ƒ¶ƒ¶", "`";
+replaceallfast "„`„`„`", "|";
+replaceallfast "ˆŸˆŸˆŸ", "^";
+replaceallfast "ƒµƒµƒµ", "Q";
+replaceallfast "îìîìîì", "E";
+
+$CurrentFile = filename;
+
+if (!selecting){
+	gofileend;
+	if (x>0) insertreturn;
+	selectall;
+}
+#Top = seltopy;
+#End= selendy;
+moveto 1, #Top;
+#Top = lineno;
+moveto 1, #End;
+if (code == eof) #End= lineno - 1;
+else #End= lineno;
+call ReSelectSub #Top, #End;
+disabledraw;
+disableinvert;
+title "ƒ\[ƒg‚µ‚Ä‚¢‚Ü‚·B‚»[‚Á‚Æ‚µ‚Ä‚Ë(^^;)";
+copy;
+openfile "/h ";
+changename "sort.tmp";
+paste;
+gofileend;
+#i=1;
+while(1){
+	movetolineno 1,#i;
+	copyline;
+	beginclipboardread;
+	$cur=getclipboard;
+	$cur="^"+$cur;
+	golinetop;
+	disableerrormsg;
+	golineend;
+	beginsel;
+	gofileend;
+	replaceallfast $cur, "",regular,inselect;
+	enableerrormsg;
+	#same=result+#same;
+	#i=#i+1;
+	gofileend;
+	#endline=lineno;
+	if (#endline<=#i) break;
+}
+selectall;
+cut;
+beginclipboardread;
+$$TSBuf = getclipboard;
+while ($$TSBuf != ""){
+	gofiletop;
+	while (code != eof){
+		beginsel;
+		golineend2;
+		$$TSLine = gettext(seltopx, seltopy, selendx, selendy);
+		if ($$TSLine > $$TSBuf) break;
+		movetolineno 1, lineno + 1;
+	}
+	golinetop2;
+	insert $$TSBuf;
+	$$TSBuf = getclipboard;
+}
+selectall;
+copy;
+setactivehidemaru findhidemaru ($CurrentFile);
+closehidemaruforced findhidemaru ("sort.tmp");
+call ReSelectSub #Top, #End;
+paste;
+setclipboard "";
+title 0;
+question $FFile+"‚ğ\n"+"Œ´•¶"+$base+"‚ÌÅŒã‚É‚Â‚È‚°‚Ü‚·‚©";
+	if( result == yes ) {
+		if (#mserver) ddeexecute "exit";
+		appendsave $base;
+		if (findhidemaru ($base)==-1) openfile $base;
+		else setactivehidemaru findhidemaru ($base);
+	}else save;
+enabledraw;
+enableinvert;
+return;
+
+ReSelectSub:
+	escape;
+	movetolineno 1, ##1;
+	beginsel;
+	movetolineno 1, ##2;
+	golineend2;
+	right;
+return;
+
+ConvSub:
+	selectall;
+	copy;
+	newfile;
+	paste;
+	call _Dantri;
+	$BR="\n";
+	gofileend;
+	searchup "<BR>";
+	if (result){
+		searchup "<PRE>";
+		if (!result) $BR="<BR>"+$BR;
+	}
+	replaceallfast "[ @	]*y]—ˆ‚Ì‹Zpz","y”wŒi‹Zpz",regular;
+	replaceallfast "[ @	]*\\f.+\\f‚ÌÀ{‚ÌŒ`‘Ôz","\\1‚ğÀ{‚·‚é‚½‚ß‚ÌÅ—Ç‚ÌŒ`‘Ôz",regular;
+	if (result){
+		$spl=gettext(0,y, linelen,y);
+		if (strstr($spl,"”­–¾")>-1) {
+			$Hatsu="”­–¾";
+			$Toku="“Á‹–";
+		}else{
+			$Hatsu="lˆÄ";
+			$Toku="À—pVˆÄ“o˜^";
+		}
+	}
+	replaceallfast "[ @	]*\\f.+\\f‚ª‰ğŒˆ‚µ‚æ‚¤‚Æ‚·‚é‰Û‘èz","\\1\\2",regular;
+	gofileend;
+	searchup "y‘—Ş–¼z[ @	]*–¾×‘",regular;
+	if (result) {
+		deleteline;
+		searchdown "y‘—Ş–¼z|y}–Ê‚ÌŠÈ’P‚Èà–¾z",regular;
+		if (result){
+			golinetop;
+			insert "yY‹Æã‚Ì—˜—p‰Â”\«z"+$BR+" "+$BR;
+		}
+	}
+	replaceallfast "[ @	]*y\\f.+\\f‚Ì”ÍˆÍz","y‘—Ş–¼z\\1‚Ì”ÍˆÍ",regular;
+	replaceallfast "[ @	]*\\fy‰Û‘è‚ğ‰ğŒˆ‚·‚é‚½‚ß‚Ìè’iz","\\1",regular;
+	replaceallfast "[ @	]*\\f.+\\f‚ÌŒø‰Êz","\\1\\2",regular;
+	replaceallfast "[ @	]*\\fy•„†‚Ìà–¾z","\\1",regular;
+	replaceallfast "y¿‹€.+z\\f[ @	]*","\\0"+$BR,regular;
+	replaceallfast "[ @	]*y.*‹Zp•ª–ìz","y‹Zp•ª–ìz",regular;
+	gofileend;
+	searchup "‚ÌÚ×‚Èà–¾z";
+	if (result) deleteline;
+	gofileend;
+	searchup "‚Ì–¼Ìz";
+	if (result) {
+		$spl=gettext(0,y, linelen,y);
+		deleteline;
+		gofileend;
+		searchup "y‹Zp•ª–ìz";
+		if (result) insert "y‘—Ş–¼z–¾×‘"+$BR+$spl+$BR;
+	}
+	gofileend;
+	searchup "y’ño•¨Œ‚Ì–Ú˜^z";
+	if (result) {
+		golineend;
+	    insert $BR+"@@y•¨Œ–¼z@" + $Toku + "¿‹‚Ì”ÍˆÍ@‚P";
+	}
+	gofiletop;
+	searchdown "‰Û‘èz|‚½‚ß‚Ìè’iz|‚ÌŒø‰Êz",regular;
+	if (result){
+		golinetop;
+		insert "y"+$Hatsu+"‚ÌŠJ¦z"+$BR;
+	}
+	gofileend;
+	searchup "yY‹Æã‚Ì—˜—p‰Â”\«z";
+	if (result){
+		golinetop;
+		#endx = x;
+		#endy = y;
+		searchup "‚ÌŒø‰Êz";
+		if (result){
+			golinetop;
+			beginsel;
+			moveto #endx,#endy;
+			cut;
+			gofileend;
+			searchup "‚ğÀ{‚·‚é‚½‚ß‚ÌÅ—Ç‚ÌŒ`‘Ôz";
+			golinetop;
+			paste;
+		}
+	}
+return;
+
+YoyakuSub:
+if (updated) save;
+if (!#Teisokuka) disabledraw;
+#linefirst = 0;
+if (selecting) {
+	#tx=seltopx;
+	#ty=seltopy;
+	#ex=selendx;
+	#ey=selendy;
+	escape;
+	$message="‘I‘ğ•”•ª•¶š”: ";
+}else{
+	gofileend;
+	#ex=x;
+	#ey=y;
+//	gofiletop;
+	searchup "y‘—Ş–¼z[ @]*—v–ñ‘",regular;
+	if (!result) {
+		message "—v–ñ‘‚Ì—“‚ª‚È‚¢‚Ì‚Åì‹Æ’†~";
+		return;
+	}
+	#tx=x;#ty=y;
+	$message="—v–ñ‘•¶š”: ";
+}
+#z=0;
+moveto #tx,#ty;
+while(1){
+	if (y>#ey) break;
+	if (y>#ty) golinetop;
+	beginsel;
+	if (y<#ey) golineend;
+	else moveto #ex,#ey;
+	copy;
+	beginclipboardread;
+ 		$a=getclipboard;
+  #z=#z+strlen($a);
+	if (strstr($a,"<BR>")>-1) #z=#z-4;
+  if (strstr($a,"</PRE>")>-1) #z=#z-6;
+ 	if (strstr($a,"</BODY>")>-1) #z=#z-7;
+ 	if (strstr($a,"</HTML>")>-1) #z=#z-7;
+  down;
+  if (!result) break;
+}
+$message=$message+str(#z/2)+"."+str((#z%2)*5);
+if (#z/2>400){
+	$message=$message+" ‘¦‚¿A"+str(#z/2-400)+"."+str((#z%2)*5)+"•¶š’´‰ß";
+}
+message $message;
+return;
+
+TPSetteiSub:
+	if ($Hakomei=="") $Hakomei="";
+	if (#SeiKazu==0) #SeiKazu=10;
+	if (#ZuKazu==0) #ZuKazu=10;
+	ddepoke "newdialog", "16, ƒeƒ“ƒvƒŒ[ƒg“ü—Í‚Ìİ’è";
+	ddepoke "newcontrol", "okcancel";
+	ddepoke "newcontrol", "radio,Shinkyu,ƒOƒ‹[ƒv";
+	ddepoke "item", "O‹É‹¤’Ê(&K)";
+	ddepoke "item", "‘Û(&I)";
+	ddepoke "item", "V(&N)";
+	ddepoke "default", str(#Shinkyu);
+	ddepoke "newcontrol" , "radio,Tokujitsu,";
+	ddepoke "item", "“ÁŠè (&P)";
+	ddepoke "item", "ÀŠè (&U)";
+	ddepoke "default", str(#Tokujitsu);
+	ddepoke "newcontrol", "check,Head,HTML“ª(&H)";
+	ddepoke "default", str(#Head);
+	ddepoke "newcolumn", "17";
+	ddepoke "newcontrol", "check,DR,‘ã—l(&X)";
+	ddepoke "default", str(#DR);
+	ddepoke "newcontrol","text,,@@@¯•Ê”Ô†(&S)";
+	ddepoke "newcontrol","edit,DRNo,"+$DRNo;
+	ddepoke "newcontrol","text,,@@@–¼(&N)";
+	ddepoke "newcontrol","edit,DRName,"+$DRName;
+	ddepoke "newcontrol", "radio,ZuKind,}‚ÌŠg’£q";
+	ddepoke "item", ".&bmp";
+	ddepoke "item", ".&gif";
+	ddepoke "default", str(#ZuKind);
+	ddepoke "newcolumn", "17";
+	ddepoke "newcontrol", "check,SDR,‘I”C‘ã—l(&Y)";
+	ddepoke "default", str(#SDR);
+	ddepoke "newcontrol","text,,@@@¯•Ê”Ô†(&T)";
+	ddepoke "newcontrol","edit,SDRNo,"+$SDRNo;
+	ddepoke "newcontrol","text,,@@@–¼(&O)";
+	ddepoke "newcontrol","edit,SDRName,"+$SDRName;
+	ddepoke "newpage", "16";
+	ddepoke "newcontrol", "check,Ga, Šè‘(&G)";
+	ddepoke "default", str(#Ga);
+	ddepoke "newcontrol", "check,Mei, –¾×‘(&M)";
+	ddepoke "default", str(#Mei);
+	ddepoke "newcontrol", "check,Ra, ¿‹‚Ì”ÍˆÍ(&R)";
+	ddepoke "default", str(#Ra);
+	ddepoke "newcontrol", "check,Yo, —v–ñ‘(&Y)";
+	ddepoke "default", str(#Yo);
+	ddepoke "newcontrol", "check,Zu, }–Ê(&N)";
+	ddepoke "default", str(#Zu);
+	ddepoke "newcontrol", "check,Tail, HTML”ö(&T)";
+	ddepoke "default", str(#Tail);
+	ddepoke "newcolumn", "31";
+	ddepoke "newcontrol","text,,¿‹€‚Ì”(&S)";
+	ddepoke "part", "14";
+	ddepoke "newcontrol", "edit,SeiKazu,"+str(#SeiKazu);
+	ddepoke "part", "7";
+	ddepoke "newcontrol", "text,,@";
+	ddepoke "part", "14";
+	ddepoke "newcontrol","text,,–¼Ì(&Q)";
+	ddepoke "part", "7";
+	ddepoke "newcontrol", "edit,Hakomei,"+$Hakomei;
+	ddepoke "newcontrol","text,,}‚Ì”(&Z)";
+	ddepoke "part", "10";
+	ddepoke "newcontrol", "edit,ZuKazu,"+str(#ZuKazu);
+	ddepoke "part", "4";
+	ddepoke "newcontrol", "text,,@";
+	ddepoke "part", "18";
+	ddepoke "newcontrol", "text,,<IMG SRC=\" \">–½–¼–@‚ÍH";
+	ddepoke "newcontrol", "text,,@";
+	ddepoke "part", "1";
+	ddepoke "newcontrol", "text,, Ì§²Ù–¼ŠîŠ²‰º(&J)";
+	ddepoke "part", "18";
+	ddepoke "newcontrol", "edit,FKan,"+str(#FKan);
+	ddepoke "part", "4";
+	ddepoke "newcontrol", "text,,•¶š{";
+	ddepoke "part", "13";
+	ddepoke "newcontrol", "text,,@Õ°»Şw’èš(&X)";
+	ddepoke "part", "18";
+	ddepoke "newcontrol", "edit,UShitei,"+$UShitei;
+	ddepoke "part","8";
+	ddepoke "newcontrol", "text,,{";
+	ddepoke "newcontrol", "text,,@";
+	ddepoke "part", "1";
+	ddepoke "newcontrol","List,Renban";
+	ddepoke "height","3";
+	ddepoke "item", "@˜A”Ô  (1¶×){}‚ÌŠg’£q";
+	ddepoke "item", "@˜A”Ô (01¶×){}‚ÌŠg’£q";
+	ddepoke "item", "@˜A”Ô(001¶×){}‚ÌŠg’£q";
+	ddepoke "default", str(#Renban);
+
+	call MakeDialog;
+	
+	#vShinkyu=val(dderequest("getstate Shinkyu"));
+	#vTokujitsu=val(dderequest("getstate Tokujitsu"));
+	#vHead=val(dderequest("getstate Head"));
+	#vDR=val(dderequest("getstate DR"));
+	$vDRNo=dderequest("getstring DRNo");
+	$vDRName=dderequest("getstring DRName");
+	#vSDR=val(dderequest("getstate SDR"));
+	$vSDRNo=dderequest("getstring SDRNo");
+	$vSDRName=dderequest("getstring SDRName");
+	$Hakomei=dderequest("getstring Hakomei");
+	#SeiKazu=val(dderequest("getstring SeiKazu"));
+	#vZuKind=val(dderequest("getstate ZuKind"));
+	#ZuKazu=val(dderequest("getstring ZuKazu"));
+	$vUShitei=dderequest("getstring UShitei");
+	#vRenban=val(dderequest("getstate Renban"));
+	#vFKan=val(dderequest("getstate FKan"));
+	#vGa=val(dderequest("getstate Ga"));
+	#vRa=val(dderequest("getstate Ra"));
+	#vMei=val(dderequest("getstate Mei"));
+	#vZu=val(dderequest("getstate Zu"));
+	#vYo=val(dderequest("getstate Yo"));
+	#vTail=val(dderequest("getstate Tail"));
+	if (#vShinkyu != #Shinkyu) {
+		writeininum $Ini,"Hdpaso","Shinkyu",#vShinkyu;
+		#Shinkyu=#vShinkyu;
+	}
+	if (#vTokujitsu != #Tokujitsu) {
+		writeininum $Ini,"Hdpaso","Tokujitsu",#vTokujitsu;
+		#Tokujitsu=#vTokujitsu;
+	}
+	if (#vDR != #DR) {
+		writeininum $Ini,"Hdpaso","DR",#vDR;
+		#DR=#vDR;
+	}
+	if ($vDRNo != $DRNo) {
+		writeinistr $Ini,"Hdpaso","DRNo",$vDRNo;
+		$DRNo=$vDRNo;
+	}
+	if ($vDRName != $DRName) {
+		writeinistr $Ini,"Hdpaso","DRName",$vDRName;
+		$DRName=$vDRName;
+	}
+	if (#vSDR != #SDR) {
+		writeininum $Ini,"Hdpaso","SDR",#vSDR;
+		#SDR=#vSDR;
+	}
+	if ($vSDRNo != $SDRNo) {
+		writeinistr $Ini,"Hdpaso","SDRNo",$vSDRNo;
+		$SDRNo=$vSDRNo;
+	}
+	if ($vSDRName != $SDRName) {
+		writeinistr $Ini,"Hdpaso","SDRName",$vSDRName;
+		$SDRName=$vSDRName;
+	}
+	if (#vHead != #Head) {
+		writeininum $Ini,"Hdpaso","Head",#vHead;
+		#Head=#vHead;
+	}
+	if (#Preform==1) $BR="<BR>\n"; else $BR="\n";
+	//disabledraw;
+	if (#vZuKind != #ZuKind) {
+		writeininum $Ini,"Hdpaso","ZuKind",#vZuKind;
+		#ZuKind=#vZuKind;
+	}
+	if ($vUShitei != $UShitei) {
+		writeinistr $Ini,"Hdpaso","UShitei",$vUShitei;
+		$UShitei=$vUShitei;
+	}
+	if (#vRenban != #Renban) {
+		writeininum $Ini,"Hdpaso","Renban",#vRenban;
+		#Renban=#vRenban;
+	}
+	if (#vFKan != #FKan) {
+		writeininum $Ini,"Hdpaso","FKan",#vFKan;
+		#FKan=#vFKan;
+	}
+	if (#vGa != #Ga) {
+		writeininum $Ini,"Hdpaso","Ga",#vGa;
+		#Ga=#vGa;
+	}
+	if (#vRa != #Ra) {
+		writeininum $Ini,"Hdpaso","Ra",#vRa;
+		#Ra=#vRa;
+	}
+	if (#vMei != #Mei) {
+		writeininum $Ini,"Hdpaso","Mei",#vMei;
+		#Mei=#vMei;
+	}
+	if (#vZu != #Zu) {
+		writeininum $Ini,"Hdpaso","Zu",#vZu;
+		#Zu=#vZu;
+	}
+	if (#vYo != #Yo) {
+		writeininum $Ini,"Hdpaso","Yo",#vYo;
+		#Yo=#vYo;
+	}
+	if (#vTail != #Tail) {
+		writeininum $Ini,"Hdpaso","Tail",#vTail;
+		#Tail=#vTail;
+	}
+
+	if( $$return == "0") goto Main;
+
+	if (#Preform==1) $BR="<BR>\n"; else $BR="\n";
+	//disabledraw;
+	if (#ZuKind==2) $ext=".gif"; else $ext=".bmp";
+	gofileend;
+	if (#ZuKazu<1) #ZuKazu=10;
+	if (#SeiKazu<1) #SeiKazu=10;
+	#point=strstr(basename,".");
+	if (#point>0) $base=leftstr(basename,#point);
+	else $base=basename;
+	if (#Tokujitsu==1){
+		$Toku="“Á‹–";
+		$Hatsu="”­–¾";
+	} else {
+		$Toku="À—pVˆÄ“o˜^";
+		$Hatsu="lˆÄ";
+	}
+	//disabledraw;
+	if (#Tail) gofileend;
+
+	if (#Head){
+		gofiletop;
+		insert "<HTML>\n<HEAD>\n<TITLE></TITLE>\n</HEAD>\n<BODY>\n";
+		if (#Preform==2) insert "<PRE>\n";
+	}
+
+	if (#Ga && #Shinkyu!=2){
+		insert "y‘—Ş–¼z@@@@@@@"+$Toku+"Šè"+$BR;
+		insert "y®—”Ô†z@@@@@@"+$BR;
+		insert "y’ño“úz@@@@@@@"+$BR;
+		insert "y‚ ‚Äæz@@@@@@@“Á‹–’¡’·Š¯“a"+$BR;
+		insert "y‘Û“Á‹–•ª—Şz@@@@"+$BR;
+		insert "y"+$Hatsu+"Òz"+$BR;
+		insert "@@yZŠ–”‚Í‹Šz@@"+$BR;
+		insert "@@y–¼z@@@@@@"+$BR;
+		insert "y"+$Toku+"oŠèlz"+$BR;
+		insert "@@y¯•Ê”Ô†z@@@@"+$BR;
+		insert "@@yZŠ–”‚Í‹Šz@@"+$BR;
+		insert "@@y–¼–”‚Í–¼Ìz@@"+$BR;
+		if (#DR==1){
+			insert "y‘ã—lz"+$BR;
+			insert "@@y¯•Ê”Ô†z@@@@"+$DRNo+$BR;
+			insert "@@y•Ù—mz"+$BR;
+			insert "@@y–¼–”‚Í–¼Ìz@@"+$DRName+$BR;
+			if (#SDR==1){
+				insert "y‘I”C‚µ‚½‘ã—lz"+$BR;
+				insert "@@y¯•Ê”Ô†z@@@@"+$SDRNo+$BR;
+				insert "@@y•Ù—mz"+$BR;
+				insert "@@y–¼–”‚Í–¼Ìz@@"+$SDRName+$BR;
+			}
+		}
+		if ($Hatsu=="lˆÄ"){
+			insert "y”[•t”N•ªz@@@@@@‘æ‚P”N•ª‚©‚ç‘æ‚R”N•ª"+$BR;
+		}
+		insert "yè”—¿‚Ì•\¦z"+$BR;
+		insert "@@y—\”[‘ä’ ”Ô†z@@"+$BR;
+		insert "@@y”[•t‹àŠzz@@@@"+$BR;
+		insert "y’ño•¨Œ‚Ì–Ú˜^z"+$BR;
+    if (#Shinkyu>1){
+		 if (#Shinkyu==3){
+			insert "@@y•¨Œ–¼z@"+$Toku+"¿‹‚Ì”ÍˆÍ@‚P"+$BR;
+		 }
+		 insert "@@y•¨Œ–¼z@–¾×‘@‚P"+$BR;
+		 insert "@@y•¨Œ–¼z@}–Ê  @‚P"+$BR;
+		 insert "@@y•¨Œ–¼z@—v–ñ‘@‚P"+$BR;
+    }else{
+		 insert "@@y•¨Œ–¼z@–¾×‘@‚P"+$BR;
+     insert "@@y•¨Œ–¼z@"+$Toku+"¿‹‚Ì”ÍˆÍ@‚P"+$BR;
+		 insert "@@y•¨Œ–¼z@—v–ñ‘@‚P"+$BR;
+		 insert "@@y•¨Œ–¼z@}–Ê  @‚P"+$BR;
+    }
+	}
+  if (#Shinkyu==3 && #Ra==1){
+		insert "y‘—Ş–¼z"+$Toku+"¿‹‚Ì”ÍˆÍ"+$BR;
+		call Claim;
+	}
+
+	if (#Mei){
+		if (#Shinkyu==3){
+			insert "y‘—Ş–¼z–¾×‘"+$BR;
+			insert "y"+$Hatsu+"‚Ì–¼Ìz"+$Hakomei+$BR;
+			insert "y‹Zp•ª–ìz"+$BR;
+			insert "@–{"+$Hatsu+"‚Í"+$Hakomei+"‚ÉŠÖ‚·‚é‚à‚Ì‚Å‚ ‚éB"+$BR;
+			insert "y”wŒi‹Zpz"+$BR+"@ˆê”Ê‚ÉA"+$BR;
+			insert "@y“Á‹–•¶Œ£‚Pz"+$BR;
+			insert "@y”ñ“Á‹–•¶Œ£‚Pz"+$BR;
+			insert "y"+$Hatsu+"‚ÌŠJ¦z"+$BR;
+			insert "y"+$Hatsu+"‚ª‰ğŒˆ‚µ‚æ‚¤‚Æ‚·‚é‰Û‘èz"+$BR;
+			insert "@‚µ‚©‚µ‚È‚ª‚çA‘Oq‚Ì”@‚­A"+$BR;
+			insert "@–{"+$Hatsu+"‚ÍAz‚©‚éÀî‚ÉŠÓ‚İA"+$Hakomei;
+			insert "‚ğ’ñ‹Ÿ‚µ‚æ‚¤‚Æ‚·‚é‚à‚Ì‚Å‚ ‚éB"+$BR;
+			insert "y‰Û‘è‚ğ‰ğŒˆ‚·‚é‚½‚ß‚Ìè’iz"+$BR;
+			insert "@–{"+$Hatsu+"‚Í"+$Hakomei+"‚É‚©‚©‚é‚à‚Ì‚Å‚ ‚éB"+$BR;
+			insert "@ã‹Lè’i‚É‚æ‚ê‚ÎAˆÈ‰º‚Ì‚æ‚¤‚Èì—p‚ª“¾‚ç‚ê‚éB"+$BR;
+			insert "y"+$Hatsu+"‚ÌŒø‰Êz"+$BR;
+			insert "@–{"+$Hatsu+"‚Ì"+$Hakomei+"‚É‚æ‚ê‚ÎA‚Æ‚¢‚¤—D‚ê‚½Œø‰Ê‚ğ‘t‚µ“¾‚éB"+$BR;
+			insert "y"+$Hatsu+"‚ğÀ{‚·‚é‚½‚ß‚ÌÅ—Ç‚ÌŒ`‘Ôz"+$BR;
+			insert "@ˆÈ‰ºA–{"+$Hatsu+"‚ÌÀ{‚ÌŒ`‘Ô‚ğ}¦—á‚Æ‹¤‚Éà–¾‚·‚éB"+$BR;
+			insert "@}`}‚Í"+$Hatsu+"‚ğÀ{‚·‚éŒ`‘Ô‚Ìˆê—á‚Å‚ ‚Á‚ÄA}’†A";
+			insert "}‚Æ“¯ˆê‚Ì•„†‚ğ•t‚µ‚½•”•ª‚Í“¯ˆê•¨‚ğ•\‚í‚µ‚Ä‚¨‚èAŠî–{“I‚È";
+			insert "\¬‚Í}‚É¦‚·]—ˆ‚Ì‚à‚Ì‚Æ“¯—l‚Å‚ ‚é‚ªA–{}¦—á‚Ì“Á’¥‚Æ‚·‚é";
+			insert "‚Æ‚±‚ë‚ÍA}‚P‚É¦‚·”@‚­A‚µ‚½“_‚É‚ ‚éB"+$BR;
+			insert "@Ÿ‚ÉAã‹L}¦—á‚Ìì“®‚ğà–¾‚·‚éB"+$BR;
+			insert "@‚±‚¤‚µ‚ÄAB"+$BR;
+			insert "@®A–{"+$Hatsu+"‚Ì"+$Hakomei+"‚ÍAãq‚Ì}¦—á‚É‚Ì‚İŒÀ’è‚³‚ê‚é";
+			insert "‚à‚Ì‚Å‚Í‚È‚­A–{"+$Hatsu+"‚Ì—v|‚ğˆí’E‚µ‚È‚¢”ÍˆÍ“à‚É‚¨‚¢‚ÄíX•ÏX";
+			insert "‚ğ‰Á‚¦“¾‚é‚±‚Æ‚Í–Ü˜_‚Å‚ ‚éB"+$BR;
+			insert "yY‹Æã‚Ì—˜—p‰Â”\«z"+$BR;
+			insert "@–{"+$Hatsu+"‚Ì"+$Hakomei+"‚Í"+$BR;
+			insert "y}–Ê‚ÌŠÈ’P‚Èà–¾z"+$BR;
+			#ZuKazuWork=#ZuKazu;
+			#i=1;
+			while( #ZuKazuWork > 0 ) {
+				insert "@@y}";
+				insertfix str(#i);
+				beginsel;
+				if (#i>99) right 3; else if (#i>9) right 2; else right;
+				tozenkakuhira;
+				escape;
+				insert "z"+$BR;
+				#i=#i+1;
+				#ZuKazuWork = #ZuKazuWork - 1;
+			}
+			insert "@@y•„†‚Ìà–¾z"+$BR;
+		}else if (#Shinkyu==2){
+			insert "y‘—Ş–¼z–¾×‘"+$BR;
+			insert "y"+$Hatsu+"‚Ì–¼Ìz"+$Hakomei+$BR;
+			insert "y‹Zp•ª–ìz"+$BR;
+			insert "@–{"+$Hatsu+"‚Í"+$Hakomei+"‚ÉŠÖ‚·‚é‚à‚Ì‚Å‚ ‚éB"+$BR;
+			insert "y”wŒi‹Zpz"+$BR+"@ˆê”Ê‚ÉA"+$BR;
+			insert "@y“Á‹–•¶Œ£‚Pz"+$BR;
+			insert "@y”ñ“Á‹–•¶Œ£‚Pz"+$BR;
+			insert "y"+$Hatsu+"‚ÌŠJ¦z"+$BR;
+			insert "y"+$Hatsu+"‚ª‰ğŒˆ‚µ‚æ‚¤‚Æ‚·‚é‰Û‘èz"+$BR;
+			insert "@‚µ‚©‚µ‚È‚ª‚çA‘Oq‚Ì”@‚­A"+$BR;
+			insert "@–{"+$Hatsu+"‚ÍAz‚©‚éÀî‚ÉŠÓ‚İA"+$Hakomei;
+			insert "‚ğ’ñ‹Ÿ‚µ‚æ‚¤‚Æ‚·‚é‚à‚Ì‚Å‚ ‚éB"+$BR;
+			insert "y‰Û‘è‚ğ‰ğŒˆ‚·‚é‚½‚ß‚Ìè’iz"+$BR;
+			insert "@–{"+$Hatsu+"‚Í"+$Hakomei+"‚É‚©‚©‚é‚à‚Ì‚Å‚ ‚éB"+$BR;
+			insert "@ã‹Lè’i‚É‚æ‚ê‚ÎAˆÈ‰º‚Ì‚æ‚¤‚Èì—p‚ª“¾‚ç‚ê‚éB"+$BR;
+			insert "y"+$Hatsu+"‚ÌŒø‰Êz"+$BR;
+			insert "@–{"+$Hatsu+"‚Ì¿‹€‚P`";
+			insertfix str(#SeiKazu);
+			beginsel;
+			if (#SeiKazu>99) right 3; else if (#SeiKazu>9) right 2; else right;
+			tozenkakuhira;
+			escape;
+			insert "‹LÚ‚Ì"+$Hakomei+"‚É‚æ‚ê‚ÎA‚Æ‚¢‚¤—D‚ê‚½Œø‰Ê‚ğ‘t‚µ“¾‚éB"+$BR;
+			insert "y}–Ê‚ÌŠÈ’P‚Èà–¾z"+$BR;
+			#ZuKazuWork=#ZuKazu;
+			#i=1;
+			while( #ZuKazuWork > 0 ) {
+				insert "@@y}";
+				insertfix str(#i);
+				beginsel;
+				if (#i>99) right 3; else if (#i>9) right 2; else right;
+				tozenkakuhira;
+				escape;
+				insert "z"+$BR;
+				#i=#i+1;
+				#ZuKazuWork = #ZuKazuWork - 1;
+			}
+			insert "y•„†‚Ìà–¾z"+$BR;
+			insert "y"+$Hatsu+"‚ğÀ{‚·‚é‚½‚ß‚ÌÅ—Ç‚ÌŒ`‘Ôz"+$BR;
+			insert "@ˆÈ‰ºA–{"+$Hatsu+"‚ÌÀ{‚ÌŒ`‘Ô‚ğ}¦—á‚Æ‹¤‚Éà–¾‚·‚éB"+$BR;
+			insert "@}`}‚Í"+$Hatsu+"‚ğÀ{‚·‚éŒ`‘Ô‚Ìˆê—á‚Å‚ ‚Á‚ÄA}’†A";
+			insert "}‚Æ“¯ˆê‚Ì•„†‚ğ•t‚µ‚½•”•ª‚Í“¯ˆê•¨‚ğ•\‚í‚µ‚Ä‚¨‚èAŠî–{“I‚È";
+			insert "\¬‚Í}‚É¦‚·]—ˆ‚Ì‚à‚Ì‚Æ“¯—l‚Å‚ ‚é‚ªA–{}¦—á‚Ì“Á’¥‚Æ‚·‚é";
+			insert "‚Æ‚±‚ë‚ÍA}‚P‚É¦‚·”@‚­A‚µ‚½“_‚É‚ ‚éB"+$BR;
+			insert "@Ÿ‚ÉAã‹L}¦—á‚Ìì“®‚ğà–¾‚·‚éB"+$BR;
+			insert "@‚±‚¤‚µ‚ÄAB"+$BR;
+			insert "@®A–{"+$Hatsu+"‚Ì"+$Hakomei+"‚ÍAãq‚Ì}¦—á‚É‚Ì‚İŒÀ’è";
+			insert "‚³‚ê‚é‚à‚Ì‚Å‚Í‚È‚­A–{"+$Hatsu+"‚Ì—v|‚ğˆí’E‚µ‚È‚¢”ÍˆÍ“à‚É";
+			insert "‚¨‚¢‚ÄíX•ÏX‚ğ‰Á‚¦“¾‚é‚±‚Æ‚Í–Ü˜_‚Å‚ ‚éB"+$BR;
+			insert "yY‹Æã‚Ì—˜—p‰Â”\«z"+$BR;
+			insert "@–{"+$Hatsu+"‚Ì"+$Hakomei+"‚Í"+$BR;
+    }else{
+			insert "y‘—Ş–¼z–¾×‘"+$BR;
+			insert "y"+$Hatsu+"‚Ì–¼Ìz"+$Hakomei+$BR;
+			insert "y‹Zp•ª–ìz"+$BR;
+			insert "@–{"+$Hatsu+"‚Í"+$Hakomei+"‚ÉŠÖ‚·‚éB"+$BR;
+			insert "y”wŒi‹Zpz"+$BR+"@ˆê”Ê‚ÉA"+$BR;
+			insert "yæs‹Zp•¶Œ£z"+$BR;
+			insert "y“Á‹–•¶Œ£z"+$BR;
+			insert "@@y“Á‹–•¶Œ£‚Pz"+$BR;
+			insert "y”ñ“Á‹–•¶Œ£z"+$BR;
+			insert "@@y”ñ“Á‹–•¶Œ£‚Pz"+$BR;
+			insert "y"+$Hatsu+"‚ÌŠT—vz"+$BR;
+			insert "y"+$Hatsu+"‚ª‰ğŒˆ‚µ‚æ‚¤‚Æ‚·‚é‰Û‘èz"+$BR;
+			insert "@‚µ‚©‚µ‚È‚ª‚çA‘Oq‚Ì”@‚­A"+$BR;
+			insert "@–{"+$Hatsu+"‚ÍAz‚©‚éÀî‚ÉŠÓ‚İA"+$Hakomei;
+			insert "‚ğ’ñ‹Ÿ‚µ‚æ‚¤‚Æ‚·‚é‚à‚Ì‚Å‚ ‚éB"+$BR;
+			insert "y‰Û‘è‚ğ‰ğŒˆ‚·‚é‚½‚ß‚Ìè’iz"+$BR;
+			insert "@–{"+$Hatsu+"‚Í"+$Hakomei+"‚É‚©‚©‚é‚à‚Ì‚Å‚ ‚éB"+$BR;
+			insert "@ã‹Lè’i‚É‚æ‚ê‚ÎAˆÈ‰º‚Ì‚æ‚¤‚Èì—p‚ª“¾‚ç‚ê‚éB"+$BR;
+			insert "y"+$Hatsu+"‚ÌŒø‰Êz"+$BR;
+			insert "@–{"+$Hatsu+"‚Ì"+$Hakomei+"‚É‚æ‚ê‚Î";
+      insert "A‚Æ‚¢‚¤—D‚ê‚½Œø‰Ê‚ğ‘t‚µ“¾‚éB"+$BR;
+			insert "y}–Ê‚ÌŠÈ’P‚Èà–¾z"+$BR;
+			#ZuKazuWork=#ZuKazu;
+			#i=1;
+			while( #ZuKazuWork > 0 ) {
+				insert "@@y}";
+				insertfix str(#i);
+				beginsel;
+				if (#i>99) right 3; else if (#i>9) right 2; else right;
+				tozenkakuhira;
+				escape;
+				insert "z"+$BR;
+				#i=#i+1;
+				#ZuKazuWork = #ZuKazuWork - 1;
+			}
+			insert "y"+$Hatsu+"‚ğÀ{‚·‚é‚½‚ß‚ÌŒ`‘Ôz"+$BR;
+			insert "@ˆÈ‰ºA–{"+$Hatsu+"‚ÌÀ{‚ÌŒ`‘Ô‚ğ}¦—á‚Æ‹¤‚Éà–¾‚·‚éB"+$BR;
+			insert "yÀ{—á‚Pz"+$BR;
+			insert "@}`}‚Í"+$Hatsu+"‚ğÀ{‚·‚éÀ{—á‚P‚Å‚ ‚Á‚ÄA}’†A";
+			insert "}‚Æ“¯ˆê‚Ì•„†‚ğ•t‚µ‚½•”•ª‚Í“¯ˆê•¨‚ğ•\‚í‚µ‚Ä‚¨‚èAŠî–{“I‚È";
+			insert "\¬‚Í}‚É¦‚·]—ˆ‚Ì‚à‚Ì‚Æ“¯—l‚Å‚ ‚é‚ªA–{}¦—á‚Ì“Á’¥‚Æ‚·‚é";
+			insert "‚Æ‚±‚ë‚ÍA}‚P‚É¦‚·”@‚­A‚µ‚½“_‚É‚ ‚éB"+$BR;
+			insert "@Ÿ‚ÉAã‹LÀ{—á‚P‚Ìì“®‚ğà–¾‚·‚éB"+$BR;
+			insert "@‚±‚¤‚µ‚ÄAB"+$BR;
+			insert "yÀ{—á‚Qz"+$BR;
+			insert "@‚³‚ç‚ÉA"+$BR;
+			insert "@®A–{"+$Hatsu+"‚Ì"+$Hakomei+"‚ÍAãq‚ÌÀ{—á‚É‚Ì‚İ";
+			insert "ŒÀ’è‚³‚ê‚é‚à‚Ì‚Å‚Í‚È‚­A–{"+$Hatsu+"‚Ì—v|‚ğˆí’E‚µ‚È‚¢”ÍˆÍ“à";
+			insert "‚É‚¨‚¢‚ÄíX•ÏX‚ğ‰Á‚¦“¾‚é‚±‚Æ‚Í–Ü˜_‚Å‚ ‚éB"+$BR;
+			insert "yY‹Æã‚Ì—˜—p‰Â”\«z"+$BR;
+			insert "@–{"+$Hatsu+"‚Ì"+$Hakomei+"‚Í"+$BR;
+			insert "y•„†‚Ìà–¾z"+$BR;
+		}
+  }
+  if (#Shinkyu==1 && #Ra==1){
+		insert "y‘—Ş–¼z"+$Toku+"¿‹‚Ì”ÍˆÍ"+$BR;
+		call Claim;
+	}
+  if (#Shinkyu==2 && #Ra==1){
+		insert "y‘—Ş–¼z¿‹‚Ì”ÍˆÍ"+$BR;
+		call Claim;
+	}
+
+	if (#Yo && #Shinkyu==1){
+		insert "y‘—Ş–¼z—v–ñ‘"+$BR;
+		insert "y—v–ñz"+$BR;
+		insert "y‰Û‘èz@"+$Hakomei+"‚ğ’ñ‹Ÿ‚·‚éB"+$BR;
+		insert "y‰ğŒˆè’iz@B"+$BR;
+		insert "y‘I‘ğ}z@@@@"+$BR;
+	}
+	if (#Yo && #Shinkyu==2){
+		insert "y‘—Ş–¼z—v–ñ‘"+$BR;
+		insert "@"+$BR;
+	}
+
+	if (#Zu){
+		insert "y‘—Ş–¼z}–Ê"+$BR;
+		#i=1;
+		#ZuKazuWork=#ZuKazu;
+		while(#ZuKazuWork > 0) {
+			insert "y}";
+			insertfix str(#i);
+			beginsel;
+			if (#i>99) right 3; else if (#i>9) right 2; else right;
+			tozenkakuhira;
+			escape;
+			insert "z"+$BR;
+			insert "<IMG SRC=\"";
+			insert rightstr($base,#FKan);
+			insert $UShitei;
+			if (#Renban==2 && #i<10) insert "0";
+			else if (#Renban==3 && #i<10) insert "00";
+			else if (#Renban==3 && #i<100) insert "0";
+			insert str(#i)+$ext+"\">"+$BR;
+			#i=#i+1;
+			#ZuKazuWork = #ZuKazuWork - 1;
+		}
+	}
+
+	if (#Yo && #Shinkyu==3){
+		insert "y‘—Ş–¼z—v–ñ‘"+$BR;
+		insert "y—v–ñz"+$BR;
+		insert "y‰Û‘èz@"+$Hakomei+"‚ğ’ñ‹Ÿ‚·‚éB"+$BR;
+		insert "y‰ğŒˆè’iz@B"+$BR;
+		insert "y‘I‘ğ}z@@@@"+$BR;
+	}
+
+	if (#Tail){
+		if (#Preform==2) insert "</PRE>\n";
+		insert "</BODY>\n</HTML>\n";
+	}
+	return;
+
+TokuSub:
+	gofiletop;
+	#num=1;
+	while (1){
+		searchdown "“Á‹–•¶Œ£[0-9‚O-‚X]*z",regular;
+		if(!result) break;
+		if (#num>1){
+			golinetop2;
+			insert "“Á“Á“Á“Á";
+			golineend2;
+		}
+		#num=#num+1;
+	}
+	return;
+
+WorkSub:
+//	ddeexecute "exit";
+	#kuri=0;
+	$mes0="ã’[‚ÌƒEƒCƒ“ƒhƒEƒLƒƒƒuƒVƒ‡ƒ“‚É]‚¢A\nŠJnˆÊ’u‚ÆI—¹ˆÊ’u‚ğw’è‚µ‚Ä‰º‚³‚¢\n";
+	$mes0=$mes0+"‚»‚ÌŠÔ‚¾‚¯ƒJ[ƒ\ƒ‹‚Í©—R‚É“®‚©‚¹‚Ü‚·\n(“¯‚¶ˆÊ’u‚Å2‰ñ´İÀ°·°‚ğ‰Ÿ‚·‚±‚Æ‚Åì‹ÆI—¹)";
+	$mes0=$mes0+"\n\n(ŒJ‚è•Ô‚µ‚Å‚ÍA\nŸ‰ñ‚©‚ç‚Í‚±‚ÌÒ¯¾°¼Ş‚È‚µ‚ÅA“¯—l‚Ìˆ—)";
+	$mes1="‚ÌŠJnˆÊ’u‚ğ´İÀ°·°‚Åw’è(“¯‚¶ˆÊ’u‚Å2‰ñ´İÀ°·°‚ğ‰Ÿ‚·‚±‚Æ‚ÅAì‹ÆI—¹)";
+	$mes2="‚ÌI—¹ˆÊ’u‚ğ´İÀ°·°‚Åw’è(ŠJnˆÊ’u‚Æ“¯‚¶ˆÊ’u‚Å´İÀ°·°‚ğ‰Ÿ‚·‚±‚Æ‚ÅAì‹ÆI—¹)";
+
+	if (selecting){	//”ÍˆÍ‘I‘ğ‚ ‚è
+		cut;
+		insert $$1;
+		paste;
+		insert $$2;
+		$message="X‚É”ÍˆÍw’è‚µ‚Äì‹Æ‚ğ‘±‚¯‚Ü‚·‚©B ";
+		$message=$message+"\n‚Í‚¢A‘±‚¯‚Ü‚·(‚x)B‚¢‚¢‚¦A‘±‚¯‚Ü‚¹‚ñ(‚m)";
+		while (1) {//–³ŒÀˆ—
+			if (#kuri==0){//ŒJ‚è•Ô‚µn‚ß
+				question $message;
+				if (result){//”ÍˆÍw’è
+					message $mes0;
+					#kuri=1;
+					inputpos $$3+$mes1;
+					#startx = x;
+					#starty = y;
+					beginsel;
+					inputpos $$3+$mes2;
+					#endx = x;
+					#endy = y;
+					if (#startx==#endx && #starty==#endy) {
+						escape;break;
+					}
+					cut;
+					insert $$1;
+					paste;
+					insert $$2;
+				}else{
+					break;
+				}
+			}else{
+				inputpos $$3+$mes1;
+				#startx = x;
+				#starty = y;
+				beginsel;
+				inputpos $$3+$mes2;
+				#endx = x;
+				#endy = y;
+				if (#startx==#endx && #starty==#endy) {
+					escape;
+					break;
+				}
+				cut;
+				insert $$1;
+				paste;
+				insert $$2;
+			}
+		}
+	}else{		//”ÍˆÍ‘I‘ğ‚È‚µ
+		while (1) {//–³ŒÀˆ—
+			if (#kuri==0){//ŒJ‚è•Ô‚µn‚ß
+				message $mes0;
+				#kuri=1;
+				inputpos $$3+$mes1;
+				#startx = x;
+				#starty = y;
+				beginsel;
+				inputpos $$3+$mes2;
+				#endx = x;
+				#endy = y;
+				if (#startx==#endx && #starty==#endy) {
+					escape;
+					break;
+				}
+				cut;
+				insert $$1;
+				paste;
+				insert $$2;
+			}else{//ŒJ‚è•Ô‚µ‚Q‰ñ–ÚˆÈ~
+				inputpos $$3+$mes1;
+				#startx = x;
+				#starty = y;
+				beginsel;
+				inputpos $$3+$mes2;
+				#endx = x;
+				#endy = y;
+				if (#startx==#endx && #starty==#endy) {
+					escape;
+					break;
+				}
+				cut;
+				insert $$1;
+				paste;
+				insert $$2;
+			}
+		}
+	}
+	return;
+
+
+Enumfile:
+  ddeexecute "enumfile *.*";
+  
+	#i = 0;
+	while(1) {
+		$name[#i] = dderequest( "findnext" );
+		if( $name[#i] == "" ) break;
+		#i = #i + 1;
+	}
+	message $name[#i];
+  return;
+
+MakeDialog:
+	#hwnd = hidemaruhandle(0);
+	ddeexecute "dialog " + str(#hwnd);
+	$$a = "";
+	ddestartadvice "dlgresult", $$a;
+	while( strlen($$a) == 0 ) {
+		ddewaitadvice $$a, 100;
+	}
+	ddestopadvice "dlgresult";
+	ddeexecute "enddialog";
+	return $$a;

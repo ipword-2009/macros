@@ -1,0 +1,23 @@
+$key2 = "2.•¶Œ£‹y‚Ñà–¾|•¶Œ£‹y‚Ñà–¾\\(•¶Œ£\\)|2 \n•¶Œ£‹y‚Ñà–¾";
+		//$key1‚Ìã‚Ì—]•ª‚È‰ÓŠ‚ğíœi‘Û’²¸‹@ŠÖ‚ÌŒ©‰ğ‘‚È‚Ç‚Ì•¶šj
+
+		begingroupundo;
+		golinetop;
+		beginsel;
+		gofiletop;
+		delete;
+		//$key1‚Æ$key2‚Æ‚ÌŠÔ‚Ì—]•ª‚È‰ÓŠ‚ğíœ
+		down;
+		beginsel;
+		searchdown $key2, regular, casesense;
+		golineend;
+		delete;
+		searchdown "•¶Œ£‹y‚Ñà–¾";
+		if(result){
+			selectline;
+			delete;
+			up;
+		}
+		//‘æ‡X—“‚Ìˆó
+		insert "V";
+		endgroupundo;

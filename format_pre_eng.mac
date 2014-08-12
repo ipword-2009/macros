@@ -1,0 +1,153 @@
+//***************************************************
+//英訳文翻訳前調整マクロ
+//2009.3.27 created
+//全角カンマ、（,）を句点（、）に変換
+//英数字のみ、半角に変換
+//2010.2.10 修正
+//
+//***************************************************
+//メッセージカウンタ
+#count = 0;
+
+//一括UNDO印
+begingroupundo;
+
+//句点（。）のあとに改行を入れて文をバラバラにする
+setcompatiblemode 0x0F;
+replaceall "。", "。\n", regular, nocasesense;
+if( result ){
+	call AddMsg "＊句点（。）のあとに改行を入れて文をバラバラにしました。\n";
+}
+
+//正規表現で置換
+execmacro "rep_by_regex_je.mac";
+call AddMsg "＊正規表現で置換しました。\n";
+
+//特許表現の用語集で置換
+execmacro "rep_by_pat_je.mac";
+call AddMsg "＊特許表現の用語集で置換しました。\n";
+
+//以下、米国出願形式の各見出し
+
+replaceall "【書類名】明細書", "DESCRIPTION";
+
+replaceall "(【|\\[)?発明の名称(\]|】)?", "TITLE OF THE INVENTION",regular, nocasesense;
+
+replaceall "(【書類名】)?(【|\\[)?特許請求の範囲(\\]|】)?", "CLAIMS\n\tWhat is claimed is:",regular, nocasesense;
+
+replaceall "(【|\\[)?発明の詳細な説明(\\]|】)?", "DETAILED DESCRIPTION OF THE INVENTION",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?発明の属する技術分野(\\]|\\)|】|）)?", "FIELD OF THE INVENTION",regular, nocasesense;
+
+replaceall "(\\(|\\[)?産業上の利用分野(\\]|\\))?", "FIELD OF THE INVENTION",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?技術分野(\\]|\\)|】|）)?", "FIELD OF THE INVENTION",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?背景技術(\\]|\\)|】|）)?", "BACK GROUND OF THE INVENTION",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?従来の技術(\\]|\\)|】|）)?", "BACK GROUND OF THE INVENTION",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?発明の開示(\\]|\\)|】|）)?", "SUMMARY OF THE INVENTION",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?発明が解決しようとする課題(\\]|\\)|】|）)?", "Problem to be Solved by the Invention",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?課題を解決するための手段(\\]|\\)|】|）)?", "Means for Solving the Problem",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?発明を実施するための(最良の)?形態(\\]|\\)|】|）)?", "DETAILED DESCRIPTION",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?実施例(\\]|\\)|】|）)?", "Description of the Embodiments",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?発明の効果(\\]|\\)|】|）)?", "ADVANTAGES OF THE INVENTION",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?作用(\\]|\\)|】|）)?", "Advantageous Effects of the Invention",regular, nocasesense;
+
+replaceall "(【|\\(|（|\\[)?図面の簡単な説明(\\]|\\)|】|）)?", "BRIEF DESCRIPTION OF THE DRAWINGS",regular, nocasesense;
+
+
+replaceall "(【|\\(|（|\\[)?産業上の利用可能性(\\]|\\)|】|）)?", "Industrial Applicability",regular, nocasesense;
+
+
+replaceall "(【|\\(|（|\\[)?符号の説明(\\]|\\)|】|）)?", "Reference Signs List",regular, nocasesense;
+
+replaceall "【書類名】要約書", "ABSTRACT";
+
+
+call AddMsg "＊米国出願形式の見出しに変換しました。\n";
+
+//【請求項#】の変換
+setcompatiblemode 0x0F;
+replaceall "【請求項\\f[0-9|０-９]+\\f】", "\\t\\1. ", regular, nocasesense;
+if( result ){
+	call AddMsg "【請求項#】見出し番号を#.に変換しました。\n";
+}
+
+//請求項の文頭のタブ調整
+setcompatiblemode 0x0F;
+replaceall "^\\t[0-9|０-９]+\\. \\f\\n", "\\0", regular, nocasesense;
+
+//段落番号の変換
+gofiletop;
+searchdown "【\\f[0-9|０-９]+\\f】\\n", regular, nocasesense;
+if( result ){
+	setcompatiblemode 0x0F;
+	replaceall "【\\f[0-9|０-９]+\\f】\\n", "[\\1]\\n\\t", regular, nocasesense;
+}
+else{
+	replaceall "【\\f[0-9|０-９]+\\f】", "[\\1]\\n\\t", regular, nocasesense;
+}
+
+if( result ){
+	call AddMsg "段落番号を[\\1]に変換しました。\n";
+}
+
+//文頭のタブ+改行の改行を削除
+setcompatiblemode 0x0F;
+replaceall "^\\t\\n", "\\t", regular, nocasesense;
+
+
+//読点（、）を半角カンマ（,）に変換
+setcompatiblemode 0x0F;
+replaceall "、", ", ";
+if( result ){
+	call AddMsg "＊読点（、）を半角カンマに変換しました。\n";
+}
+
+//英数字のみ、半角に変換
+setcompatiblemode 0x0F;
+selectall;
+filter "" , "ToHankakuAlnum";
+if( result ){
+	call AddMsg "＊英数字のみ、半角に変換しました。\n";
+}
+
+//上書き保存
+save;
+
+//st起動して置換
+runsync2 "C:\\Translation\\st\\st.exe";
+call AddMsg "＊SimplyTermsで置換しました。*_eng.txtが出力されています。\n";
+
+//一括UNDO印
+endgroupundo;
+
+//完了メッセージ作成
+$complete = "";
+
+#i = #count;
+while(#count >= 0){
+	$complete = $complete + $msg[#i-#count];
+	#count = #count - 1;
+}
+
+//完了メッセージ表示
+message $complete;
+
+endmacro;
+
+//***
+//処理内容メッセージを追加するサブルーチン
+//***
+AddMsg:
+	$msg[#count] = $$1;
+	#count = #count + 1;
+	return;

@@ -1,0 +1,131 @@
+//***************************************************
+//PCT用英訳前調整マクロ
+//クライアントから特にフォーマットを指定されず、
+//PCT共通出願様式にて明細書を作成する場合
+
+//PCTの項目名置換
+//特許定型文置換
+//英数字のみ半角に変換
+//SimplyTerms置換
+
+//2011.8.10 (N社用に)作成
+//***************************************************
+//メッセージカウンタ
+#count = 0;
+
+//一括UNDO印
+begingroupundo;
+
+
+//以下、PCT形式の各見出し
+
+replaceall "【書類名】明細書", "[DESCRIPTION]";
+
+replaceall "^(【|\\[)?明細書(\\]|】)?", "[DESCRIPTION]",regular, nocasesense;
+
+replaceall "^(【|\\[)?発明の名称(\\]|】)?", "[Title of Invention]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?技術分野(\\]|\\)|】|）)?", "[Technical Field]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?背景技術(\\]|\\)|】|）)?", "[Background Art]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?先行技術文献(\\]|\\)|】|）)?", "[Citation List]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?特許文献\\f[0-9]+\\f(\\]|\\)|】|）|:)?", "[PTL \\1]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?特許文献(\\]|\\)|】|）)?", "[Patent Literature]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?非特許文献\\f[0-9]+\\f(\\]|\\)|】|）|:)?", "[NPL \\1]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?非特許文献(\\]|\\)|】|）|:)?", "[Non Patent Literature]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?発明の概要(\\]|\\)|】|）)?", "[Summary of Invention]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?発明が解決しようとする課題(\\]|\\)|】|）)?", "[Technical Problem]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?課題を解決するための手段(\\]|\\)|】|）)?", "[Solution to Problem]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?発明の効果(\\]|\\)|】|）)?", "[Advantageous Effects of Invention]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?図面の簡単な説明(\\]|\\)|】|）)?", "[Brief Description of Drawings]",regular, nocasesense;
+
+replaceall "^(【|\\[)+図\\f[0-9]+\\f(\\]|】)+", "[Fig. \\1]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?発明を実施するための形態(\\]|\\)|】|）)?", "[Description of Embodiments]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?実施例\\f[0-9]+\\f(\\]|\\)|】|）)?", "[Example \\1]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?数\\f[0-9]+\\f(\\]|\\)|】|）)?", "[Math. \\1]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?表\\f[0-9]+\\f(\\]|\\)|】|）)?", "[Table \\1]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?産業上の利用可能性(\\]|\\)|】|）)?", "[Industrial Applicability]",regular, nocasesense;
+
+replaceall "^(【|\\(|（|\\[)?符号の説明(\\]|\\)|】|）)?", "[Reference Signs List]",regular, nocasesense;
+
+replaceall "【書類名】請求の範囲", "[CLAIMS]",regular, nocasesense;
+
+replaceall "^(【|\\[)?(特許)?請求の範囲(\\]|】)?", "[CLAIMS]",regular, nocasesense;
+replaceall "^(【|\\[)+請求項\\f[0-9]+\\f(\\]|】)+", "[Claim \\1]",regular, nocasesense;
+
+replaceall "【書類名】要約書", "[ABSTRACT]";
+
+replaceall "^(【|\\[)?要約(書)?(\\]|】)?", "[ABSTRACT]",regular, nocasesense;
+
+replaceall "【書類名】図面", "[DRAWINGS]";
+
+call AddMsg "＊PCT共通出願様式の見出しに変換しました。\n";
+
+//正規表現で置換
+execmacro "rep_by_regex_je.mac";
+call AddMsg "＊正規表現で置換しました。\n";
+
+//特許表現の用語集で置換
+execmacro "rep_by_pat_je.mac";
+call AddMsg "＊特許表現の用語集で置換しました。\n";
+
+
+//英数字のみ、半角に変換
+setcompatiblemode 0x0F;
+selectall;
+filter "" , "ToHankakuAlnum";
+if( result ){
+	call AddMsg "＊英数字のみ、半角に変換しました。\n";
+}
+
+//上書き保存
+save;
+
+
+//部材名+符号＃をスペースで分割
+//例）ゲージ本体48　-> ゲージ本体 48
+replaceall "[^図|ステップ|実施例|請求項|乃至|ないし|または|又は|および|及び|0-9|a-Z|\\[|\\]|\\t|,|、|\\(|\\)| |/]+\\f[0-9|a-Z]+", "\\0 \\1",regular, nocasesense;
+
+//st起動して置換
+runsync2 "C:\\Translation\\st\\st.exe";
+call AddMsg "＊SimplyTermsで置換しました。*_eng.txtが出力されています。\n";
+
+//一括UNDO印
+endgroupundo;
+
+//完了メッセージ作成
+$complete = "";
+
+#i = #count;
+while(#count >= 0){
+	$complete = $complete + $msg[#i-#count];
+	#count = #count - 1;
+}
+
+//完了メッセージ表示
+message $complete;
+
+endmacro;
+
+//***
+//処理内容メッセージを追加するサブルーチン
+//***
+AddMsg:
+	$msg[#count] = $$1;
+	#count = #count + 1;
+	return;

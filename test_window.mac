@@ -1,0 +1,8 @@
+//*******************************************
+//ウィンドウの位置とサイズを表示
+//2008.1.5 created
+//*******************************************
+message "windowposx = " + str(windowposx);
+message "windowposy = " + str(windowposy);
+message "windowcx = " + str(windowcx);
+message "windowcy = " + str(windowcy);

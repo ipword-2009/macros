@@ -1,0 +1,459 @@
+//******************************************************
+//JTC　特許協力条約（見解書）翻訳ファイル前処理
+//2009.06.09 created
+//作業フォルダ内（\textdata）のファイル（見解書_翻訳の流れ）上で実行する
+//前提条件：作業フォルダ内に既にData2ProでTEXT変換した
+//          ファイル(000003.txtなど)がある
+//******************************************************
+//$key1 = "国際出願番号POT/ |国際出願番号P CT/ ";
+$key1 = "国際出願番号POT/|国際出願番号P CT/ ";
+$key2 = "2.文献及び説明|文献及び説明\\(文献\\)|2 \n文献及び説明";
+$key3 = "^様式POT/I .*\n";
+$key4 = "新規性、 進歩性又は産業上の利用可能性についての見解の不作成";
+$key5 = "第V]]I欄 国際出願に対する意見";
+$key6 = "第IV欄発明の単一性の欠如";
+$key7 = "以下の理由により満足しない。";
+$key8 = "^補充欄\n";
+$key9 = "国際調査機関の見解書\n";
+$key10 = "いずれかの欄の大きさが足りない場合第.*欄の続き([0-9]+)? ?\n";
+$key11 = "いずれかの欄の大きさが足りない場合\n";
+$key12 = "第.*欄の続き\n";
+$key13 = "請求の範囲、明細書及び図面の明瞭性又は請求の範囲の明細書による十分な裏付についての意見を次に示す。\n";
+$key14 = "したがって、 ?国際出願の次の部分について、 ?この見解書を作成した。";
+$key15 = "に関する部分";
+$key16 = "\(具体的に記載すること\)";
+$key17 = "明細書、請求の範囲若しくは図面";
+$key18 = "全部の請求項又は請求項";
+$key19 = "について、国際調査報告が作成されていない。";
+$key20 = "詳細については補充欄を参照すること。";
+$key21 = "請求の範囲、明細書及び図面の明瞭性又は請求の範囲の明細書による十分な裏付についての意見を次に示す。";
+
+//実行元ファイルのハンドル
+#h1 = hidemaruhandle(0);
+
+//
+//$key2を含むファイルのクリーン処理
+//
+call GrepKeyFile $key2;
+
+#count = #i;
+#i = 0;
+while(#i != #count){
+	$file = $files[#i];
+	openfile "/h " + $file;
+
+	gofiletop;
+	searchdown $key1, regular, casesense;
+	if(result){
+		//$key1の上の余分な箇所を削除（国際調査機関の見解書などの文字）
+		golinetop;
+		beginsel;
+		gofiletop;
+		delete;
+		//$key1と$key2との間の余分な箇所を削除
+		down;
+		beginsel;
+		searchdown $key2, regular, casesense;
+		golineend;
+		delete;
+		searchdown "文献及び説明";
+		if(result){
+			selectline;
+			delete;
+			up;
+		}
+		//第Ⅴ欄の印
+		insert "V";
+		//$key3削除
+		searchdown $key3, regular, casesense;
+		selectline;
+		delete;
+		save;
+	}
+	#i = #i + 1;
+}
+
+//#全ての処理対象ファイルを閉じるため、実行元ファイルをアクティブにする
+//最後のファイル（000005など）は、自身のファイルであるから閉じることができないため
+setactivehidemaru #h1;
+call CloseFile #count;
+
+
+//
+//$key4を含むファイルのクリーン処理
+//
+call Clean $key4;
+
+//
+//$key5を含むファイルのクリーン処理
+//
+call Clean $key5;
+
+//
+//$key6を含むファイルのクリーン処理
+//
+call Clean $key6;
+
+//
+//$key8を含むファイルのクリーン処理
+//
+call Clean $key8;
+
+//
+//全ファイルの内容をひとつにまとめる
+//
+call GrepNums;
+
+newfile;
+
+//新規作成したファイルのハンドル
+#all = hidemaruhandle(0);
+
+#j = 0;
+while($nums[#j]!=""){
+	
+	call GrepKeyFile $nums[#j];
+	#count = #i;
+	#i = 0;
+	while(#i != #count){
+		setactivehidemaru #all;
+		insertfile $files[#i];
+		insertreturn;
+		#i = #i + 1;
+	}
+	#j = #j + 1;
+}
+
+setactivehidemaru #all;
+
+//
+//全内容のクリーン処理
+//
+setcompatiblemode 0x0F;
+replaceall "白明", "自明";
+replaceall "At", "A1", casesense;
+replaceall "&opt", "&EP", casesense;
+replaceall "結品", "結晶";
+replaceall "それそれ", "それぞれ";
+replaceall "月重瘍", "腫瘍";
+replaceall "未、満", "未満";
+replaceall "、、", "、";
+replaceall "、 、", "、";
+replaceall "国際出願番号POT/ J P20 \\f[0-9]+", "JP20\\1" , regular, casesense;
+replaceall "国際出願番号POT/ ?J P\\f[0-9|\\/]+\\f \\f[0-9]+", "JP\\1\\3" , regular, casesense;
+replaceall "国際出願番号P CT/ J P20 \\f[0-9]+", "JP20\\1" , regular, casesense;
+replaceall "文献[0-9]+:\\f(WO|JP)", "\\0 \\1", regular, casesense;
+replaceall "[0-9]+\\f:\\f[a-Z]+", "\\0: \\2", regular, nocasesense;
+replaceall "^[0-9]+\\.\\f[a-Z]+", "\\0 \\1", regular, nocasesense;
+replaceall "A(", "A (";
+replaceall "A1(", "A1 (";
+replaceall "A1&", "A1 & ";
+replaceall "\\)\\f[0-9]+", "\\), \\1", regular, nocasesense;
+//日本語文字間にある不要な半角スペースを削除
+replaceall " \\f[ぁ-ン|亜-黑]+" , "\\1" , regular, nocasesense;
+
+//文献[0-9]+:が文中にあったら、改行して文頭にもってくる
+gofiletop;
+while(true){
+	searchdown "文献[0-9]+:", regular, nocasesense;
+	if(result){
+		if(x != 0) insertreturn;
+	}
+	else break;
+}
+replaceall ",全文,全図", ", 全文, 全図";
+replaceall ",全文、全図", ", 全文, 全図";
+replaceall "[0-9]+,\\f\\n\\f(段落|全文)+.*\\n", "\\0 \\2", regular, nocasesense;
+replaceall ",段落【", ", 段落【";
+replaceall "全文、", "全文, ";
+replaceall "請求の範囲[0-9]+\\f \\f[0-9]+", "\\0\\2", regular, nocasesense;
+replaceall "三差化学", "三菱化学";
+replaceall "麒鹿解麦酒", "麒麟麦酒";
+replaceall "絶縁月英", "絶縁膜";
+replaceall "f毎", "海";
+replaceall "文献[0-9]+: .*,\\f\\n\\f.*\\n", "\\0 \\2", regular, nocasesense;
+replaceall "文献[0-9]+: .*\\]\\f\\n\\f.*\\n", "\\0 \\2", regular, nocasesense;
+replaceall "文献[0-9]+: .*[0-9]+\\f\\n\\fAl.*\\n", "\\0 \\2", regular, nocasesense;
+replaceall "Al&US", "A1 & US";
+replaceall "Al&EP", "A1 & EP";
+replaceall "[0-9]+\\f&WO", "\\0 & WO", regular, nocasesense;
+replaceall "[0-9]+\\f&US", "\\0 & US", regular, nocasesense;
+replaceall "\\]\\f&US", "\\0 & US", regular, nocasesense;
+replaceall "&WO\\f[0-9]+", "& WO \\1", regular, nocasesense;
+replaceall ",\\f(特許|請求|図)+", ", \\1", regular, nocasesense;
+replaceall ",[", ", [";
+replaceall "&US", "& US";
+replaceall "US20", "US 20";
+replaceall "\n&", " &", regular, nocasesense;
+replaceall "全図\\n\\f\\(", "全図 \\1", regular, nocasesense;
+
+//カタカナで途切れている箇所修正
+replaceall "[ァ-ン|ー]+\\f\\n\\f.*\\n", "\\0\\2", regular, nocasesense;
+
+//文末にある不要な半角スペースを削除
+replaceall " \\n", "\\n", regular, nocasesense;
+//カンマ調整
+replaceall ",\\f[a-Z|0-9]+", ", \\1", regular, nocasesense;
+
+replaceall $key13, "", regular, nocasesense;
+replaceall "^有無", "", regular, nocasesense;
+replaceall " 「", "「";
+replaceall "非品質体", "非晶質体";
+replaceall "Co11e", "Colle";
+replaceall "月英", "膜";
+replaceall "トレイン電極", "ドレイン電極";
+replaceall "p\\f[0-9]+-", "p. \\1", regular, casesense;
+replaceall "[0-9]+\\f直", "\\0頁", regular, casesense;
+replaceall "胃月易", "胃腸";
+replaceall "(ファミリーなし)", " (ファミリーなし)";
+replaceall "常密度", "嵩密度";
+replaceall "三差電機株式会社", "三菱電機株式会社";
+replaceall "頭著な", "顕著な";
+replaceall "POT規則", "PCT規則";
+replaceall "グロロー", "クロロー";
+replaceall "株式会社ウァーユ", "株式会社ヴァーユ";
+replaceall "0 0", "00";
+replaceall "士壌", "土壌";
+replaceall "隠成処理", "隠蔽処理";
+replaceall "增幅", "増幅";
+replaceall "ュニツト", "ユニット";
+replaceall "細目状相", "網目状相";
+replaceall "導電性員武形物", "導電性賦形物";
+replaceall "白重", "自重";
+replaceall "アスヘクト比", "アスペクト比";
+replaceall "心月成", "心臓";
+replaceall "心月筋", "心筋";
+replaceall "白体", "自体";
+replaceall "転がり接角出", "転がり接触";
+replaceall "宇幕表示", "字幕表示";
+replaceall "往復連動", "往復運動";
+replaceall "株式会社ミツトョ", "株式会社ミツトヨ";
+replaceall "三差重工業", "三菱重工業";
+replaceall "アドパンスト", "アドバンスト";
+replaceall "株式会社C-GR I P", "株式会社C-GRIP";
+replaceall "日立コミュニケーションテクノ1'シ'-", "日立コミュニケーションテクノロジー";
+replaceall "日本ヒ'クター株式会社", "日本ビクター株式会社";
+replaceall "株式会社ニチェイ", "株式会社ニチエイ";
+replaceall "範略", "範疇";
+replaceall "要付け", "裏付け";
+replaceall "液品", "液晶";
+replaceall "いo", "い。";
+replaceall "角出媒", "触媒";
+replaceall "ぃ", "い";
+replaceall "負イ荷", "負荷";
+replaceall "電イ荷", "電荷";
+replaceall "洗f争", "洗浄";
+replaceall "POT第", "PCT第";
+replaceall "P C T", "PCT";
+replaceall $key21, "";
+
+
+//ファイル最後に挿入されてしまう余分な行（C:\...）grep履歴？を削除
+gofileend;
+beginsel;
+up;
+delete;
+
+saveas "all.txt";
+
+exitall;
+endmacro;
+
+
+//***
+//クリーン処理サブルーチン
+//$$1:$key#
+//***
+Clean:
+	call GrepKeyFile $$1;
+	call CleanKeys $$1;
+
+	setactivehidemaru #h1;
+	call CloseFile #count;
+	return;
+
+
+//***
+//grep結果からファイルリストを作るサブルーチン
+//$$1:grepする文字
+//***
+GrepKeyFile:
+	grep $$1, "*.txt", ".", regular, fullpath;
+
+	//クリップボード履歴を念のため削除
+	clearcliphist;
+	//grepファイルの内容をコピー
+	selectall;
+	copy;
+
+	beginclipboardread;
+	#i=0;
+	$a[#i]=getclipboard;
+
+	//クリップボードから各ファイルパスを読み込む。
+	while($a[#i]!=""){
+		$line = $a[#i];
+		//$lineに含まれている"("のインデックス
+		#parenIndex = strstr($line, "(");
+		$file = leftstr($line, #parenIndex);
+		//ここで、ファイルオープンしようとすると失敗する(最初のファイルを何度も開けようとする)ので、
+		//一旦ファイル名を配列に格納する
+		$files[#i]=$file;
+		//クリップボードの次の行を読み込む
+		#i = #i + 1;
+		$a[#i]=getclipboard;
+	}
+	return;
+
+
+//***
+//$key1より上、$key3、その他不要な箇所を削除するサブルーチン
+//***
+CleanKeys:
+	#count = #i;
+	#i = 0;
+	while(#i != #count){
+		$file = $files[#i];
+		openfile "/h " + $file;
+
+		gofiletop;
+		searchdown $key1, regular, casesense;
+		if(result){
+			if(strstr($$1, $key8) != -1){
+				//国際出願番号の行をカットして先頭にペースト
+				selectline;
+				cut;
+				gofiletop;
+				paste;
+				insertreturn;
+				replacedown $key8, "", regular;
+				replacedown $key9, "", regular;
+				replacedown $key10, "", regular;
+				replacedown $key11, "", regular;
+				replacedown $key12, "", regular;
+			}
+			else{
+				//$key1の上の余分な箇所を削除（国際調査機関の見解書などの文字）
+				golinetop;
+				beginsel;
+				gofiletop;
+				delete;
+				down;
+				if(strstr($$1, $key4) != -1){
+					gofiletop;
+					searchdown $key4, regular, casesense;
+					selectline;
+					delete;
+					insert "III";
+					insertreturn;
+					golinetop;
+					beginsel;
+					searchdown $key16, regular, casesense;
+					golineend;
+					delete;
+					delete;
+					endsel;
+					searchdown $key17, regular, casesense;
+					golinetop;
+					beginsel;
+					searchdown $key16, regular, casesense;
+					golineend;
+					delete;
+					endsel;
+					searchdown $key18, regular, casesense;
+					golinetop;
+					beginsel;
+					searchdown $key16, regular, casesense;
+					golineend;
+					delete;
+					endsel;
+					searchdown $key19, regular, casesense;
+					golinetop;
+					beginsel;
+					searchdown $key20, regular, casesense;
+					golineend;
+					delete;
+					delete;
+					delete;
+					delete;
+					delete;
+					endsel;
+				}
+				else if(strstr($$1, $key5) != -1) insert "VIII";
+				if(strstr($$1, $key6) != -1){
+					insert "IV";
+					beginsel;
+					searchdown $key7, regular, casesense;
+					golineend;
+					delete;
+					endsel;
+					searchdown $key14, regular, casesense;
+					golinetop;
+					beginsel;
+					searchdown $key15, regular, casesense;
+					golineend;
+					delete;
+				}//end of else if
+				insertreturn;
+			}//end of else
+			//$key3削除
+			searchdown $key3, regular, casesense;
+			selectline;
+			delete;
+			save;
+		}//end of if
+		#i = #i + 1;
+	}//end of while
+	return;
+
+
+//***
+//クローズ用サブルーチン
+//##1:#count, クローズするファイル数
+//***
+CloseFile:
+	#i = 0;
+	while(#i != ##1){
+		$file = $files[#i];
+		closehidemaru findhidemaru($file);
+		#i = #i + 1;
+	}
+	return;
+
+
+//***
+//grep結果から国際出願番号のリストを作るサブルーチン
+//***
+GrepNums:
+	grep $key1, "*.txt", ".", regular, fullpath;
+
+	//クリップボード履歴を念のため削除
+	clearcliphist;
+	//grepファイルの内容をコピー
+	selectall;
+	copy;
+
+	beginclipboardread;
+	#i=0;
+	$a[#i]=getclipboard;
+	//クリップボードから各ファイルパスを読み込む。
+	while($a[#i]!=""){
+		$line = $a[#i];
+
+		//国際出願番号が重複しないようにリストを作成
+		//2009.08.13 修正 000003までで全ての番号が格納できている
+		//すでに全ての番号を格納しているのでループを出る
+		if(strstr($line, "000004") != -1) break;
+
+		//$lineに含まれている"/ "のインデックス
+		#colonIndex = strstr($line, "/ ");
+		if(#colonIndex == -1) #colonIndex = strstr($line, "/");
+		#rightlen = strlen($line)-#colonIndex - 2;
+		$num = rightstr($line, #rightlen);
+
+		$nums[#i]=$num;
+		//クリップボードの次の行を読み込む
+		#i = #i + 1;
+		$a[#i]=getclipboard;
+	}
+	return;

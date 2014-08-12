@@ -1,0 +1,8 @@
+//***************************************************
+//UWSCを使ってオンライン辞書やツールを開くマクロ
+//MemSource, 熟考,英辞郎on the WEB, Weblioを一気に開く
+//2012.10.25 created
+//***************************************************
+
+//UWSCでonline辞書たちを開く
+runsync2 "C:\\software\\uwsc48b\\UWSC.exe C:\\software\\uwsc48b\\onlineDics.UWS";

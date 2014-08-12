@@ -1,0 +1,124 @@
+//***************************************************
+//和訳文最終調整マクロ
+//2008.1.28 created
+//①英数字の間にある半角スペースを全角スペースに変換
+//②和訳文に残っている、英文上の半角スペースを削除
+//③原文上のタブを全角スペースに変換
+//④英数字のみ、全角に変換
+//⑤全角カンマ、（,）を句点（、）に変換
+//⑥文末の不要な全角スペースを削除
+//2009.4.1 updated
+//a, an, theを削除、コンピュータsの削除追加
+//***************************************************
+
+//メッセージカウンタ
+#count = 0;
+
+//一括UNDO印
+begingroupundo;
+
+#flag = 0;
+
+//全て訳し終わったあと、a, an, theを削除
+replaceall "( an|an | a|a |　an|an　|　a|a　)+", "", regular, nocasesense;
+if( result ) #flag = 1;
+replaceall "(an|a)+\\f[ぁ-ン|亜-黑|（|）]+", "\\1", regular, nocasesense;
+if( result ) #flag = 1;
+replaceall "[ぁ-ン|亜-黑|（|）]+\\f(an|a)+", "\\0", regular, nocasesense;
+if( result ) #flag = 1;
+if( #flag == 1 )	call AddMsg "※a, an, A, An を削除しました。\n";
+#flag = 0;
+replaceall "( the|the |　the|the　)+", "", regular, nocasesense;
+if( result ) #flag = 1;
+replaceall "The\\f[ぁ-ン|亜-黑|（|）]+", "\\1", regular, nocasesense;
+if( result ) #flag = 1;
+replaceall "[ぁ-ン|亜-黑|（|）]+\\fThe", "\\0", regular, nocasesense;
+if( result ) #flag = 1;
+if( #flag == 1 )	call AddMsg "※the, The を削除しました。\n";
+
+
+//コンピュータsなどのsを削除 漢字のみ検索は、以下のように指定
+//参考：http://homepage2.nifty.com/jr-kun/hidemaru_qa/HME0066A.html
+replaceall "[ぁ-ン|亜-黑]+\\fs" , "\\0" , regular, nocasesense;
+if( result )	call AddMsg "※コンピュータsなどのsを削除しました。\n";
+
+//①英数字の間にある半角スペースを全角スペースに変換
+setcompatiblemode 0x0F;
+#flag = 0;
+while(true){
+	replaceall "[a-Z|0-9]+\\f \\f[a-Z|0-9]+" , "\\0　\\2" , regular, nocasesense;
+	if(result){
+		#flag = 1;
+		continue;
+	}
+	else{
+		if(#flag == 1){
+				call AddMsg "※英数字の間にある半角スペースを全角スペースに変換しました。\n";
+		}
+		break;
+	}
+}
+
+//②和訳文に残っている、英文上の半角スペースを削除
+setcompatiblemode 0x0F;
+replaceall " ", "";
+if( result ){
+	call AddMsg "※和訳文に残っている、半角スペースを削除しました。\n";
+}
+
+//③原文上のタブを全角スペースに変換
+setcompatiblemode 0x0F;
+replaceall "\t", "　";
+if( result ){
+	call AddMsg "※原文上のタブを全角スペースに変換しました。\n";
+}
+
+//④英数字のみ、全角に変換
+setcompatiblemode 0x0F;
+selectall;
+filter "" , "ToZenkakuAlnum";
+if( result ){
+	call AddMsg "※英数字のみ、全角に変換しました。\n";
+}
+
+
+//⑤全角カンマ、（,）を句点（、）に変換
+//この時点で半角カンマは、全角カンマになっている。
+setcompatiblemode 0x0F;
+replaceall "，", "、";
+if( result ){
+	call AddMsg "※全角カンマ、（，）を句点（、）に変換しました。\n";
+}
+
+//⑥文末の不要な全角スペースを削除
+setcompatiblemode 0x0F;
+replaceall "　\\n", "\\n", regular, nocasesense;
+if( result ){
+	call AddMsg "※文末の不要な全角スペースを削除しました。\n";
+}
+
+
+//一括UNDO印
+endgroupundo;
+
+//完了メッセージ作成
+$complete = "";
+
+#i = #count;
+while(#count != 0){
+	$complete = $complete + $msg[#i-#count];
+	#count = #count - 1;
+}
+
+//完了メッセージ表示
+message $complete;
+
+endmacro;
+
+//***
+//処理内容メッセージを追加するサブルーチン
+//***
+AddMsg:
+	$msg[#count] = $$1;
+	#count = #count + 1;
+	return;

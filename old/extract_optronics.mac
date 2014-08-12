@@ -1,0 +1,66 @@
+//*************************************************
+//optronics対訳データから用語集を抽出
+//2008.1.28 created
+//注：ウィンドウ幅最大で実行すること。
+//注：同時スクロール解除しておくこと。
+//*************************************************
+
+//英対訳データのハンドル
+#h1 = hidemaruhandle(0);
+
+//和対訳データのハンドル
+#h2 = findhidemaru("optronics_j.txt");
+
+if(#h2 == -1){
+	message "和対訳データは見つかりません。終了します。";
+	endmacro;
+}
+
+setactivehidemaru #h1;
+
+//一括UNDOマーク
+begingroupundo;
+
+setcompatiblemode 0x0F;
+gofiletop;
+
+///test
+//#count = 0;
+
+while(true){
+	//2word以上からなる用語の行を検出
+	searchdown ".+ +|.+(-)+", regular, nocasesense;
+	//##1は、用語集に挿入するデータがある行番号ー１
+	if(result)	call InsertData y;
+	else	break;
+	//test
+	//#count = #count + 1;
+	//if(#count == 10)  break;
+
+}//end of while
+
+//test
+//endmacro;
+
+replaceall "^[a-z|A-Z|、]+\n", "", regular, nocasesense;
+
+replaceall "^\n", "", regular, nocasesense;
+
+//一括UNDOマーク
+endgroupundo;
+
+endmacro;
+
+//タブと訳語を挿入するサブルーチン
+InsertData:
+	golineend;
+	insert "\t";
+	setactivehidemaru #h2;
+	moveto 0, ##1;
+	searchdown "　：　", regular, nocasesense;
+	beginsel;
+	golinetop;
+	copy;
+	setactivehidemaru #h1;
+	paste;
+	return;

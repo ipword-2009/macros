@@ -1,0 +1,81 @@
+//***************************************************
+//図訳反映マクロ
+//訳文上で図面翻訳後、訳語を訳文に反映させる
+//2011.8.11 (N社用に)作成
+//***************************************************
+
+
+//実行元の訳文ファイルの秀丸ハンドルを保持
+#hwnd = hidemaruhandle(0);
+
+clearcliphist;
+gofiletop;
+
+$filename = "C:\\Translation\\TRANS_DATA\\figs.txt";
+
+openfile "/h " + $filename;
+
+selectall;
+copy;
+
+//実行中の訳文ファイル.txtを一番上に表示する
+setactivehidemaru #hwnd;
+
+beginclipboardread;
+#i =0;
+$a[#i]=getclipboard;
+
+//一括UNDO印
+begingroupundo;
+
+
+while($a[#i]!=""){
+	$line = $a[#i];
+	#colonIndex = strstr($line, ":");
+	#tabIndex = strstr($line, "\t");
+	if (#colonIndex == -1){
+		#i =#i +1;
+		$a[#i]=getclipboard;
+		continue;
+	}
+	#parenIndex = strstr($line, ")");
+
+	//置換対象文字列
+	$left = leftstr($line, #colonIndex);
+//	message "left = " + $left;
+	#leftlen = strlen($left)- #parenIndex-1;
+	$leftright = rightstr($left, #leftlen);
+	//message "$leftright = " + $leftright;
+
+	//置換後文字列の長さ
+	#rightlen = strlen($line)-#tabIndex-1;
+	//置換後文字列
+	$right = rightstr($line, #rightlen);
+	$rightleft = leftstr($right, #rightlen-1);
+
+
+	//置換後文字列の長さ
+	//#rightlen = strlen($line)-#colonIndex-1;
+
+	//$right = rightstr($line, #rightlen);
+	//message "right = " + $right;
+
+	//置換後文字列
+	//$rightleft = leftstr($right, #rightlen-1);
+	//message "rightleft = " + $rightleft;
+
+	//lowercaseに変換
+	//$converted = filter("", "ToLower", "",$rightleft);
+	//message "$converted = " + $converted;
+
+	//全置換
+	replaceall $leftright, $rightleft, regular, nocasesense;
+	#i =#i +1;
+	$a[#i]=getclipboard;
+}
+
+//一括UNDO印
+endgroupundo;
+
+endmacro;
+

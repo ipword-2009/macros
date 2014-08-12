@@ -1,0 +1,194 @@
+//***************************************************
+//PDFtoDataでPDFから変換したテキスト（PCT）を整形
+//2008.1.30 created
+//***************************************************
+
+//Biblio.ページの最上段のテキスト（PCTマークの上）検索
+gofiletop;
+
+//searchdown "INTERNATIONAL APPLICATION PUBLISHED UNDER THE PATENT COOPERATION TREATY \\(PCT\\)", regular, nocasesense;
+
+//if( !result ){
+//	message "PCTのテキストではありません。終了します。";
+//	endmacro;
+//}
+
+//Description前、以下まで削除する
+beginsel;
+searchdown "WO .+ \\nPCT/US.+\\n", regular, nocasesense;
+down;
+golineend;
+
+//一括UNDO印
+begingroupundo;
+delete;
+
+while(true){
+	//以下にマッチする行を削除
+	searchdown "WO .+ \\nPCT/US.+\\n", regular, nocasesense, loop;
+	if(result){
+		beginsel;
+		down;
+		golineend;
+		delete;
+	}
+	else	break;
+}
+
+while(true){
+	//以下にマッチする行を削除
+	searchdown "WO .+ \\n[0-9]+ \\nPCT/US.+\\n", regular, nocasesense, loop;
+	if(result){
+		beginsel;
+		down 2;
+		golineend;
+		delete;
+	}
+	else	break;
+}
+
+
+
+//途中で切れている文をつなげる（文の途中の\nからピリオド（.）までつなげる）
+//a-z\nで切れている場合
+//replaceall "[a-z]+\\f\\n\\f[^A-Z]+.+\\.", "\\0 \\2", regular, nocasesense;
+
+replaceall "[a-z]+\\f\\n\\f.+\\.", "\\0 \\2", regular, nocasesense;
+
+//-\nで切れている場合
+replaceall "-+\\f\\n\\f.+\\.", "\\0\\2", regular, nocasesense;
+
+// \nで切れている場合
+replaceall " +\\f\\n\\f.+\\.", "\\0\\2", regular, nocasesense;
+
+// \nで切れて、続きの文の間に\nがある場合
+replaceall " +\\f\\n\\n\\f[^\\[]+\\.", "\\0\\2", regular, nocasesense;
+
+//,\nで切れている場合
+replaceall ",\\f\\n\\f.+\\.", "\\0 \\2", regular, nocasesense;
+
+//\n\nを\nに置換
+replaceall "\\n\\n", "\\n", regular, nocasesense;
+
+//filed on ***.\n**を***. *変換に変換
+replaceall "\\.\\f\\n\\f[0-9]+", "\\0 \\2", regular, nocasesense;
+
+//行頭の連続した不要な段落番号を削除
+replaceall "^[\\[|0-9|\\]| |\\n]+\\n", "", regular, nocasesense;
+replaceall "^\\[[0-9]+\\] [\\[|0-9|\\]| ]+", "", regular, nocasesense;
+
+//Claimsの途中にある不要な以下を削除
+replaceall "WO .+ \\nPCT/US.+[0-9]+ ", "", regular, nocasesense;
+
+//Claimsを検索し、その下にあるWO .+ \\n以下
+//（図面が読み込まれて文字化けしている個所）を削除
+searchdown "Claims", casesense, loop;
+searchdown "WO .+ \\n", regular, casesense;
+beginsel;
+gofileend;
+delete;
+
+//数式などが挿入されているために段落の行頭がずれている個所の不要な部分を削除
+while(true){
+	replaceall "\\n[^A-Z|\\[]+(\\n| |[^A-Z])+", "\\n", regular, casesense, loop;			if( !result )	break;
+}
+
+//FIG.などの以下の個所を調整
+replaceall "; and [", "; and \n[", nocasesense;
+
+//段落間にある不要な\nを削除
+replaceall "^\\[[0-9]+\].+\\f\\n\\f[^\[]+\\n\\[[0-9]+\\]", "\\0 \\2", regular, nocasesense;
+
+//Abstract前の不要な文字を削除
+gofiletop;
+searchdown "Abstract", casesense;
+beginsel;
+gofiletop;
+delete;
+
+
+//PCT原文の各見出し置換、前後に\nを挿入
+replaceall "Cross-reference to Related Application|Cross-reference to related application|CROSS-REFERENCE TO RELATED APPLICATION", "\\n　〔関連出願の相互参照〕\\n",regular, casesense;
+replaceall "Abstract|ABSTRACT", "\\n【書類名】要約書\\n【要約】\\n　 ",regular, casesense;
+replaceall "Brief Description of the Drawings|BRIEF DESCRIPTION OF THE DRAWINGS|BRIEF DESCRIPTION OF THE DRAWING(S)", "\\n【図面の簡単な説明】\\n",regular, casesense;
+replaceall "^Description|^DESCRIPTION", "\\n【書類名】明細書\\n\\n【発明の名称】",regular, casesense;
+replaceall "Field of the Invention|FIELD OF THE INVENTION", "\\n　〔発明の分野〕\\n",regular, casesense;
+replaceall "Technical Field|Technical field|TECHNICAL FIELD", "\\n　〔技術分野〕\\n",regular, casesense;
+replaceall "Background|BACKGROUND|Background of the Invention|BACKGROUND OF THE INVENTION", "\\n　〔発明の背景〕\\n",regular, casesense;
+replaceall "Summary of the Invention|SUMMARY OF THE INVENTION", "\\n　〔発明の要約〕\\n",regular, casesense;
+replaceall "Detailed Descriptions of the Preferred Embodiments|Detailed Description of the Embodiments|DETAILED DESCRIPTIONS OF THE PREFERRED EMBODIMENTS|DETAILED DESCRIPTION OF THE EMBODIMENTS|Detailed Description of the Invention|DETAILED DESCRIPTION OF THE INVENTION", "\\n　〔本発明の好ましい実施形態の詳細な説明〕\\n",regular, casesense;
+replaceall "Descriptions of the Preferred Embodiments|DESCRIPTIONS OF THE PREFERRED EMBODIMENTS", "\\n　〔本発明の好ましい実施形態の詳細な説明〕\\n", regular, casesense;
+replaceall "Claims|CLAIMS", "\\n【書類名】特許請求の範囲\\n", regular, casesense;
+
+//行頭の余分な：を削除
+replaceall "^　: ", "", regular, nocasesense;
+
+//文中の段落番号以降を改行
+replaceall " +\\f\\[[0-9]+\\]", "\\n\\1", regular, nocasesense;
+
+//残っている行頭の段落番号を削除
+replaceall "^[\\[0-9]+\\] ", "", regular, nocasesense;
+
+//=を含む式などの行を調整
+replaceall "expressed in\\f\\n\\f.+ = ", "\\0 \\2", regular, nocasesense;
+
+//１つの段落に２つの請求項がある場合、分割
+replaceall "^.+ of claim [0-9]+,.+\\.\\f +\\f.+ of claim [0-9]+", "\\0\\n\\2", regular, casesense;
+
+//【書類名】特許請求の範囲以下の各請求項の行頭に【請求項＃】を挿入
+searchdown "【書類名】特許請求の範囲", nocasesense, loop;
+
+#count = 1;
+while(true){
+	searchdown "^[A-Z]+", regular, casesense;
+	if(result){
+		$claim_num = str(#count);
+		$claim_label = "【請求項"  + $claim_num + "】";
+		golinetop;
+		insert $claim_label;		
+		beginsel;
+		golinetop;
+		filter "" , "ToZenkakuAlnum";
+		endsel;
+		searchdown "】";
+		right 1;
+		insert "\n　";
+		#count = #count + 1;
+	}
+	else	break;
+}
+
+//行頭の余分な　 : を全角スペースに変換
+replaceall "\\n　 : ", "\\n　", regular, nocasesense;
+
+// Patent\nApplicationを変換
+replaceall "Patent\\nApplication", "Patent Application", regular, casesense;
+
+replaceall "“.+\\f\\n\\f.+”", "\\0 \\2", regular, nocasesense;
+
+gofiletop;
+
+//〔発明の背景〕以降、実施形態の終わりまで、各段落前に段落番号を挿入
+searchdown "〔発明の背景〕", nocasesense;
+
+#count = 1;
+while(true){
+	$para_num = str(#count);
+	$para_label = "["  + $para_num + "]\n";
+	replacedown "\\n\\f[A-Z]+", "\\n"+$para_label+"\\1",regular, casesense;
+	if(result)	#count = #count + 1;
+	else	break;
+}
+
+//各文章をバラバラに分解
+replaceall "\\.\\n", "\\.\\n\\n", regular, nocasesense;
+replaceall "\\.\\f +\\f[A-Z]+", "\\0\\n\\n\\2", regular, casesense;
+
+gofiletop;
+
+//一括UNDO印
+endgroupundo;
+
+endmacro;
+
+

@@ -1,0 +1,18 @@
+//*************************************************
+//対訳データの1データ間にある￥ｎをスペースに変換
+//2008.1.5 created
+//*************************************************
+setcompatiblemode 0x0F;
+begingroupundo;
+
+while(true){
+	replaceall ".+\\f\\n\\f.+", "\\0　\\2", regular, nocasesense;
+	if(result){
+		continue;
+	}
+	else{
+		message "行間の￥ｎをスペースに変換しました。";
+		break;
+	}
+} 
+endgroupundo;

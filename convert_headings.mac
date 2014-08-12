@@ -1,0 +1,110 @@
+//*******************************************
+//日本語の見出しに変換　& 
+//日本語の見出しの順に訳文をフォーマット
+//2008.08.25 created
+//*******************************************
+
+gofiletop;
+
+//---【書類名】明細書 ---
+insert "【書類名】明細書";
+insertreturn;
+
+//---【発明の名称】 ---
+insert "【発明の名称】";
+
+//発明の名称をスキップして、次の行頭に移動
+searchdown "\n" ,regular;
+insertreturn;
+
+//---【発明の詳細な説明】 ---
+insert "【発明の詳細な説明】";
+
+//--- 次の見出しを置換 ------------
+//Field of the Invention
+//Background of the Invention
+//Brief Description of the Drawings
+//Detailed Descriptions of the Preferred Embodiments 
+//	| Detailed Description of the Embodiments
+//Summary of the Invention
+//---------------------------------
+
+//実行元の訳文ファイルの秀丸ハンドルを保持
+#hwnd = hidemaruhandle(0);
+
+//headings.txtがあるかチェック
+$fileName = "C:\\Program Files\\Hidemaru\\Macro\\headings.txt";
+
+if(existfile($fileName) == 0){
+	message $fileName + "見出しファイルは存在しません。見出し置換＆フォーマットマクロを終了します。";
+	endmacro;
+}
+
+openfile "/h " + $fileName;
+
+//headings.txtの中身を全てコピー
+selectall;
+copy;
+
+//実行中の訳文ファイル.txtを一番上に表示する
+setactivehidemaru #hwnd;
+
+beginclipboardread;
+#i =0;
+$a[#i]=getclipboard;
+while($a[#i]!=""){
+	$line = $a[#i];
+	#tabIndex = strstr($line, "\t"); 
+	//置換対象文字列
+	$left = leftstr($line, #tabIndex);
+	//置換後文字列の長さ
+	#rightlen = strlen($line)-#tabIndex-1;
+	//置換後文字列
+	$right = rightstr($line, #rightlen);
+	//全置換
+	replaceall $left, $right, regular, casesense;
+	#i =#i +1;
+	$a[#i]=getclipboard;
+}
+
+//---【書類名】要約書の挿入---
+searchdown "Abstract|ABSTRACT",regular, casesense;
+
+
+// 後で、特許請求の範囲を切り出すため
+// Abstractの行番号を保持
+#line = y;
+
+if(result){
+	beginsel;
+	right linelen;
+	cut;
+	insert "【書類名】要約書";
+	insertreturn;
+	insert "【要約】";
+	gofileend;
+	insert "【選択図】図";
+}
+
+//---【書類名】特許請求の範囲 ---
+searchup "Claims|CLAIMS",regular, casesense;
+
+if(result){
+	beginsel;
+	moveto 0, #line - 1;
+	cut;
+	gofiletop;
+	paste;
+	insertreturn;
+}
+
+gofiletop;
+beginsel;
+right linelen;
+searchdown "What is claimed is:";
+if(result){
+	down;
+}
+delete;
+insert "【書類名】特許請求の範囲\n";
+

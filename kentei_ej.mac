@@ -1,0 +1,36 @@
+//***************************************************
+//‚Ù‚ñ‚â‚­ŒŸ’èi‰p˜aj–â‘è•¶®Œ`ƒ}ƒNƒ
+//2009.2.24 created
+//***************************************************
+
+begingroupundo;
+
+//PCTŒ´•¶‚ÌŠeŒ©o‚µ’uŠ·A‘OŒã‚É\n‚ğ‘}“ü
+replaceall "Cross-reference to Related Application|Cross-reference to related application|CROSS-REFERENCE TO RELATED APPLICATION|CROSS REFERENCE TO RELATED APPLICATION", "yŠÖ˜AoŠè‚Ì‘ŠŒİQÆz",regular, casesense;
+replaceall "Abstract|ABSTRACT", "\\ny‘—Ş–¼z—v–ñ‘\\ny—v–ñz\\n@ ",regular, casesense;
+replaceall "Brief Description of the Drawings|BRIEF DESCRIPTION OF THE DRAWINGS|BRIEF DESCRIPTION OF THE DRAWING(S)", "\\ny}–Ê‚ÌŠÈ’P‚Èà–¾z\\n",regular, casesense;
+//replaceall "Field of the Invention|FIELD OF THE INVENTION", "y”­–¾‚Ì•ª–ìz",regular, casesense;
+replaceall "Field of the Invention|FIELD OF THE INVENTION", "y‹Zp•ª–ìz",regular, casesense;
+replaceall "Technical Field|Technical field|TECHNICAL FIELD", "y‹Zp•ª–ìz",regular, casesense;
+replaceall "Background|BACKGROUND|Background of the Invention|BACKGROUND OF THE INVENTION", "y”wŒi‹Zpz",regular, casesense;
+replaceall "Descriptions of the Related Art|DESCRIPTIONS OF THE RELATED ART", "y”wŒi‹Zpz",regular, casesense;
+replaceall "Disclosure of Invention|DISCLOSURE OF INVENTION", "y”­–¾‚ÌŠJ¦z",regular, casesense;
+replaceall "SUMMARY|Summary|Summary of the Invention|SUMMARY OF THE INVENTION", "”­–¾‚ÌŠT—v",regular, casesense;
+replaceall "^OPERATION", "y“®ìz",regular, casesense;
+replaceall "OBJECTS AND ADVANTAGES", "–Ú“I‚¨‚æ‚ÑŒø‰Ê",regular, nocasesense;
+replaceall "Detailed Descriptions of the Preferred Embodiments|Detailed Description of the Embodiments|DETAILED DESCRIPTIONS OF THE PREFERRED EMBODIMENTS|DETAILED DESCRIPTION OF THE EMBODIMENTS|Detailed Description of the Invention|DETAILED DESCRIPTION OF THE INVENTION", "\\ny–{”­–¾‚ÌD‚Ü‚µ‚¢À{Œ`‘Ô‚ÌÚ×‚Èà–¾z\\n",regular, casesense;
+replaceall "Descriptions of the Preferred Embodiments|DESCRIPTIONS OF THE PREFERRED EMBODIMENTS|Description of the Preferred Embodiment|DESCRIPTION OF THE PREFERRED EMBODIMENT", "\\ny–{”­–¾‚ÌD‚Ü‚µ‚¢À{Œ`‘Ô‚ÌÚ×‚Èà–¾z\\n", regular, casesense;
+replaceall "^Description|^DESCRIPTION", "\\ny‘—Ş–¼z–¾×‘\\n\\ny”­–¾‚Ì–¼Ìz",regular, casesense;
+replaceall "Brief Description of the Drawings|BRIEF DESCRIPTION OF THE DRAWINGS", "y}–Ê‚ÌŠÈ’P‚Èà–¾z",regular, casesense;
+replaceall "^We claim:", "y“Á‹–¿‹‚Ì”ÍˆÍz",regular, casesense;
+replaceall "Claims|CLAIMS|What is claimed is:", "y‘—Ş–¼z“Á‹–¿‹‚Ì”ÍˆÍ", regular, casesense;
+
+//’i—”Ô†‚ÌƒJƒbƒR‚ğ˜a•¶—p‚É•ÏŠ·
+//replaceall "[", "y";
+//replaceall "]", "z";
+
+
+
+endgroupundo;
+
+endmacro;

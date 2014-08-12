@@ -1,0 +1,3 @@
+	setcompatiblemode 0x0F;
+	searchdown "[‚Ÿ-ƒ“|ˆŸ-üK|@|A|B]+" , regular, nocasesense, hilight;
+	if( ! result )  beep;

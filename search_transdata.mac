@@ -1,0 +1,52 @@
+//*******************************************
+//対訳データ検索
+//2008.10.20 created
+//*******************************************
+
+//ファイル名定数
+$org = "eng";
+$translated = "jpn";
+//$enData = "英対訳データ1.txt";
+//$jpData = "和対訳データ2.txt";
+
+$enData = "optronics_e.txt";
+$jpData = "optronics_j.txt";
+
+//basenameに“原文”が含まれていたら、英対訳データを検索
+if(strstr(basename, $org) != -1){
+	#hh = findhidemaru($enData);
+}
+//basenameに“訳文”が含まれていたら、和対訳データを検索
+else if(strstr(basename, $translated) != -1){
+	#hh = findhidemaru($jpData);
+}
+else{
+	message "対訳データ検索の対象外のファイル上での操作です。終了します。";
+	endmacro;
+}
+
+if(#hh == -1){
+	message "対訳データが見つかりません。終了します。";
+	endmacro;
+}
+
+//選択範囲チェック
+if(!selecting){
+	message "テキストが選択されておりません。";
+	endmacro;
+}
+
+//選択範囲コピー
+copy;
+
+//選択テキスト取得
+beginclipboardread;
+#i = 0;
+$a[#i] = getclipboard;
+$text = $a[0];
+
+//対象の対訳データファイルをアクティブにする
+setactivehidemaru #hh;
+
+//$textを検索
+searchdown $text, loop;

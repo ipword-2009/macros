@@ -1,0 +1,71 @@
+//***************************************************
+//PCT(日英)公報翻訳用(N社)
+//PDFtoDataでPDFから変換したテキスト（PCT）を整形
+//2011.8.9 作成
+//***************************************************
+
+//原文から不要な部分を削除
+gofiletop;
+
+beginsel;
+searchdown "(54)Title";
+up;
+golineend;
+
+//一括UNDO印
+begingroupundo;
+
+delete;
+
+searchdown "(51)国際特許分類";
+golinetop;
+beginsel;
+searchdown "(57)Abstract";
+up;
+golineend;
+delete;
+
+replaceall "^WO.+\\n", "", regular, nocasesense;
+
+replaceall "^POT.+\\n", "", regular, nocasesense;
+
+replaceall "^[0-9]+ \\n", "", regular, nocasesense;
+
+//各段落で途中で切れている文をつなげる。
+replaceall "\\n\\f[^\\[|\\]]+(、|。)", "\\1", regular, nocasesense;
+replaceall "\\n\\f[^\\[|\\]]+(、|。)", "\\1", regular, nocasesense;
+
+replaceall "、 ", "、";
+
+replaceall "。 ", "。";
+
+replaceall "い\\n0", "い。\\n", regular, nocasesense;
+
+replaceall "る\\n0", "る。\\n", regular, nocasesense;
+
+
+//以下の置換は2回実行する（１回では全て置換されないため）
+//数字間のスペースを削除
+replaceall "[0-9]+\\f +\\f[0-9]+", "\\0\\2", regular, nocasesense;
+replaceall "[0-9]+\\f +\\f[0-9]+", "\\0\\2", regular, nocasesense;
+
+
+//日本語の途中にある余分な空白を削除
+replaceall "[ぁ-ン|亜-黑]+\\f +\\f[ぁ-ン|亜-黑]+", "\\0\\2", regular, nocasesense;
+replaceall "[ぁ-ン|亜-黑]+\\f +\\f[ぁ-ン|亜-黑]+", "\\0\\2", regular, nocasesense;
+
+//不完全な日本語を修正
+replaceall "それそ'れ", "それぞれ";
+replaceall "ュニツト", "ユニット";
+replaceall "馬区動", "駆動";
+
+
+//段落間に改行を入れて読みやすくする
+replaceall "\\n\\[", "\\n\\n\\[", regular, nocasesense;
+
+
+//一括UNDO印
+endgroupundo;
+
+endmacro;
+

@@ -1,0 +1,94 @@
+//***************************************************
+//ほんやく検定（和英）問題文整形マクロ
+//2009.2.19 created
+//***************************************************
+gofiletop;
+
+//表題を示す下線
+//searchdown "===========";
+
+begingroupundo;
+
+//問題文がある文字数で改行されていたら、以下を実行
+//while(true){
+//	down;
+//	if(code == eof)	break;
+//	if(code != 0x0D){
+//		golineend;
+//	}
+	//問題文において、最長の文末の位置(55)より大きいとき
+	//つまり、７４～７６文字付近の改行のみ削除
+//	if(x > 48) delete;
+//}
+
+//なぜか問題文に、全角ピリオドが入っている場合、。に変換
+//replaceall "．", "。";
+
+//全角カンマ変換
+//replaceall "，", "、";
+
+//定型の見出しを置換
+replaceall "【発明の詳細な説明】", "[Detailed Description of the Invention]";
+
+replaceall "【発明の属する技術分野】", "[Technical Field of the Invention]";
+
+replaceall "【技術分野】", "[Technical Field of the Invention]";
+
+replaceall"【背景技術】", "[Background of the Invention]";
+
+replaceall "【従来の技術】", "[Description of the Related Art]";
+
+replaceall "【発明の開示】", "[Summary of the Invention]";
+
+replaceall "【発明が解決しようとする課題】", "[Problem to be Solved by the Invention]";
+
+replaceall "【課題を解決するための手段】", "[Means for Solving the Problem]";
+
+replaceall "【発明を実施するための最良の形態】", "[Description of Preferred Embodiments]";
+
+replaceall "【実施例】", "[Description of the Embodiment]";
+
+replaceall "【発明の効果】", "[Advantages of the Invention]";
+
+replaceall "【図面の簡単な説明】", "[Brief Description of the Drawings]";
+
+replaceall "\\]\\f.+\\n", "\\0\\n\\t\\1", regular;
+
+
+//（イ）（ロ）などの箇条書きの項目を変換
+$item_j[0] = "（イ）";
+$item_j[1] = "（ロ）";
+$item_j[2] = "（ハ）";
+$item_j[3] = "（ニ）";
+$item_j[4] = "（ホ）";
+$item_j[5] = "（ヘ）";
+$item_j[6] = "（ト）";
+
+$item_e[0] = "(a)";
+$item_e[1] = "(b)";
+$item_e[2] = "(c)";
+$item_e[3] = "(d)";
+$item_e[4] = "(e)";
+$item_e[5] = "(f)";
+$item_e[6] = "(g)";
+
+#a = 6;
+while( #a >= 0 ) {
+    replaceall $item_j[#a], $item_e[#a];
+    #a = #a - 1;
+}
+
+//正規表現で置換
+execmacro "rep_by_regex.mac";
+
+
+//段落番号等の数字のみ半角に変換
+setcompatiblemode 0x0F;
+selectall;
+filter "" , "ToHankakuAlnum";
+
+//段落番号のカッコを英文用に変換
+replaceall "【", "[";
+replaceall "】", "]";
+
+endgroupundo;

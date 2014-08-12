@@ -1,0 +1,36 @@
+//******************************************************************
+// 置換リストの作成		
+//2008.1.5 created
+// 置換する度に、訳文の最後に置換リスト(置換前の単語\t置換後の単語)
+//のリストを挿入する
+//******************************************************************
+
+
+//置換前のカーソル位置を記憶
+#col = x;
+#line = y;
+
+replace;
+	$str1 = searchbuffer;
+	$str2 = replacebuffer;
+
+if(result > 0)
+	message str(result) + "個の文字を置換しました。";
+//	message "置換した文字は、「" +  $str1 +  "」です。";
+//	message "置換後の文字は、「" +  $str2 +  "」です。";
+
+	$str_yougo_mark = "============以下、用語集へ追加===========";
+	searchdown $str_yougo_mark;
+	if(result == 0)	{
+		gofileend;
+		insertreturn;
+		insertreturn;
+		insert $str_yougo_mark + "\n";
+	}
+	gofileend;
+	insert $str1 + "\t" + $str2 + "\n";
+	message "insert 成功！";
+	moveto #col,#line;
+else
+	message "置換する文字がありません。";
+

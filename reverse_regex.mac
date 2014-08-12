@@ -1,0 +1,47 @@
+//*******************************************
+//正規表現(特許)の英⇔和反転ファイルを作成
+//2009.2.20 created
+//例）regex_pat_ej.txtなどから実行すると、
+//内容がj\teのファイルができる
+//*******************************************
+
+//正規表現_特許.txtの中身を全てコピー
+selectall;
+copy;
+
+//反転後ファイルを新規作成
+openfile "reversed_regex.txt";
+
+//反転後ファイルのハンドル
+#h1 = findhidemaru("reversed_regex.txt");
+
+//反転後のファイルを一番上に表示する
+setactivehidemaru #h1;
+
+beginclipboardread;
+#i =0;
+$a[#i]=getclipboard;
+while($a[#i]!=""){
+	//message $a[#i];
+	$line = $a[#i];
+	#tabIndex = strstr($line, "\t"); 
+	//置換対象文字列
+	$left = leftstr($line, #tabIndex);
+	//message "left = " + $left;
+	//置換後文字列の長さ
+	#rightlen = strlen($line)-#tabIndex-1;
+	//置換後文字列
+	$right = rightstr($line, #rightlen);
+	$rightleft = leftstr($right, #rightlen-1);
+	//$rightと$leftを反転
+	insert $rightleft;
+	insert "\t";
+	insert $left;
+	insertreturn;
+	#i =#i +1;
+	$a[#i]=getclipboard;
+}
+
+replaceall "^\\t\\n", "", regular;
+
+endmacro;

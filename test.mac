@@ -1,0 +1,53 @@
+//メッセージカウンタ
+#count = 0;
+
+//一括UNDO印
+begingroupundo;
+
+
+//【請求項#】の変換
+setcompatiblemode 0x0F;
+replaceall "【請求項\\f[0-9|０－９]+\\f】", "\\t\\1. ", regular, nocasesense;
+if( result ){
+	call AddMsg "【請求項#】見出し番号を#.に変換しました。\n";
+}
+
+//段落番号の変換
+setcompatiblemode 0x0F;
+replaceall "【\\f[0-9|０－９]+\\f】", "[\\1]\\n\\t", regular, nocasesense;
+if( result ){
+	call AddMsg "【請求項#】見出し番号を#.に変換しました。\n";
+}
+
+//英数字のみ、半角に変換
+setcompatiblemode 0x0F;
+selectall;
+filter "" , "ToHankakuAlnum";
+if( result ){
+	call AddMsg "＊英数字のみ、半角に変換しました。\n";
+}
+
+//一括UNDO印
+endgroupundo;
+
+//完了メッセージ作成
+$complete = "";
+
+#i = #count;
+while(#count >= 0){
+	$complete = $complete + $msg[#i-#count];
+	#count = #count - 1;
+}
+
+//完了メッセージ表示
+message $complete;
+
+endmacro;
+
+//***
+//処理内容メッセージを追加するサブルーチン
+//***
+AddMsg:
+	$msg[#count] = $$1;
+	#count = #count + 1;
+	return;

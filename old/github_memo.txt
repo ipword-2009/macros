@@ -1,0 +1,110 @@
+<GitHub‚ÅƒŠƒ|ƒWƒgƒŠ‚ğì‚é>
+
+‚PDƒT[ƒoãihttps://github.com/j‚ÉAFREE‚P‚O‚OMƒAƒJƒEƒ“ƒg‚ğì¬
+
+ipword-2009
+mayumi.kato@ip-wordsmith.com
+b********0
+
+‚QDCreate a repository(Project name‚ğmacros‚É)
+
+‚RDGlobal setup:
+
+  Download and install Git‚ÅAmsysGit(Git-1.6.0.2-preview20080923)‚ğƒCƒ“ƒXƒg[ƒ‹
+
+‚SDgitbash‹N“®
+
+‚TDˆÈ‰ºƒRƒ}ƒ“ƒhÀs
+
+mkdir macros@i‚±‚±‚ÅAVista‚È‚çmk’¼‰ºƒ†[ƒUƒtƒHƒ‹ƒ_’¼‰º‚Éì‚éj
+cd macros
+git init
+touch README
+git add README
+git commit -m 'first commit'
+git remote add origin git@github.com:ipword-2009/macros.git
+
+<public key‚ğì¬>
+http://github.com/guides/using-git-and-github-for-the-windows-for-newbies
+‚ğQÆB
+
+$ ssh-keygen -C "mayumi.kato@ip-wordsmith.com" -t rsa
+$ git config --global user.name "ipword.2009" 
+$ git config --global user.email mayumi.kato@ip-wordsmith.com
+
+<public key‚ğ“o˜^>
+C:\Users\mk\.ssh\id_rsa.pub‚Ì’†g‚ğƒRƒs[‚µ‚ÄAaccount settings>SSH keys>Add SSH key‚É“o˜^‚·‚é
+
+<web‚Åipword-2009/’¼‰º‚ÉAmacrosƒtƒHƒ‹ƒ_‚ğì¬>
+public‚Åcreate
+
+git push origin master
+
+--‚±‚±‚Ü‚Å‚ÅAREADME‚ªmacrosƒŠƒ|ƒWƒgƒŠ‚É“ü‚Á‚½‚©ƒ`ƒFƒbƒN
+
+<ˆÈ~AXV‚·‚é‚Æ‚«‚ÍAˆÈ‰º‚ğÀs@''‚É‚ÍƒRƒƒ“ƒg‚ğ‘‚­>
+macrosƒtƒHƒ‹ƒ_“à‚ÅA
+‚UD
+git add . (macrosƒtƒHƒ‹ƒ_ˆÈ‰º‚·‚×‚Ä‚ğgit‚ÌŠÇ—‰º‚É“o˜^‚·‚é)
+git commit -m 'second commit - all files'
+git push origin master
+--‚±‚±‚Ü‚Å‚ÅA‘Sƒtƒ@ƒCƒ‹‚ªmacrosƒŠƒ|ƒWƒgƒŠ‚É“ü‚Á‚½‚©ƒ`ƒFƒbƒN
+
+
+
+
+
+<‘¼‚Ì‚o‚b‚ÅGithub‚ğƒCƒ“ƒXƒg[ƒ‹BŠù‘¶‚ÌƒŠƒ|ƒWƒgƒŠ‚ğ‹¤—L‚·‚é>
+
+* Download and install Git‚ÅAmsysGit(Git-1.6.0.2-preview20080923)‚ğƒCƒ“ƒXƒg[ƒ‹
+
+* GitBash‹N“®
+
+* ˆÈ‰º‚ÌƒRƒ}ƒ“ƒh‚ğÀs‚µApublickey‚ğì¬
+mk@MK-NOTE ~
+$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/c/Users/mk/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /c/Users/mk/.ssh/id_rsa.
+Your public key has been saved in /c/Users/mk/.ssh/id_rsa.pub.
+The key fingerprint is:
+29:43:90:cb:23:61:89:4a:3a:5f:b9:23:f8:a0:27:69 mk@MK-NOTE
+
+* ~mk\.ssh\id_rsa.pub‚Ì’†g‚ğƒRƒs[‚µ‚ÄAmyyoume‚Ìaccountƒy[ƒW‚Ìpublic key ‚É“o˜^‚·‚é(V‹K‚Ìkey‚Æ‚µ‚Ä•Ê“r“o˜^B)
+
+* git clone‚ğÀs‚µAƒ[ƒJƒ‹‚ÉmacrosƒtƒHƒ‹ƒ_‚ğƒ_ƒEƒ“ƒ[ƒh‚·‚é
+mk@MK-NOTE ~
+$ git clone git@github.com:myyoume/macros.git
+Initialized empty Git repository in c:/Users/mk/macros/.git/
+remote: Counting objects: 91, done.[K
+remote: Compressing objects: 100% (87/87), done.[K
+remote: Total 91 (delta 44), reused 0 (delta 0)[K
+Receiving objects: 100% (91/91), 48.42 KiB | 62 KiB/s, done.
+Resolving deltas: 100% (44/44), done.
+
+* ƒ[ƒJƒ‹‚Å•ÏX‰Á‚¦‚½‚çAmacros’¼‰º‚Å‚¢‚Â‚à‚Ì‚æ‚¤‚Égit add .
+
+* git commit -m ''
+
+* git push
+
+<WEBã‚É‚ ‚éÅV‚Ìƒ\[ƒX‚Åƒ[ƒJƒ‹‚ğXV‚·‚é>
+mk@MK-PC ~/macros
+$ git pull git@github.com:myyoume/macros.git
+From git@github.com:myyoume/macros
+ * branch            HEAD       -> FETCH_HEAD
+Updating 8a31f69..034f37f
+Fast forward
+ old/github_memo.txt |   39 ++++++++++++++++++++++++++++++++++-----
+ 1 files changed, 34 insertions(+), 5 deletions(-)
+
+¦git clone‚Åì¬‚µ‚½ƒ[ƒJƒ‹‚ÌƒŠƒ|ƒWƒgƒŠƒtƒHƒ‹ƒ_‚Å‚ÍA$git pull‚¾‚¯‚ÅOK.
+
+<configƒtƒ@ƒCƒ‹‚ÌC³>
+$macrosƒtƒHƒ‹ƒ_‚ÅAgit pull‚Æƒ^ƒCƒv‚µ‚ÄÀs‚·‚é‚¾‚¯‚ÅAƒ[ƒJƒ‹‚ªÅV‚É‚È‚é‚æ‚¤‚ÉAconfigƒtƒ@ƒCƒ‹‚ÉˆÈ‰º‚ğ’Ç‰Á‚µ‚Ä‚¨‚­B
+
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master

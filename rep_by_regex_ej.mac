@@ -1,0 +1,54 @@
+//*******************************************
+//正規表現(特許)による置換
+//2008.1.5 created
+//*******************************************
+
+//実行元ファイルのウィンドウハンドルを保持
+//MEMO 複数の秀丸を表示するときには、単純に０番目のハンドルでなはくて、
+//setactivehidemaru findhidemaru( "実行中の訳文ファイル.txt" );に修正する。
+
+//実行元の訳文ファイルの秀丸ハンドルを保持
+#hwnd = hidemaruhandle(0);
+
+$filename = "C:\\Translation\\GLOSARRY\\正規表現\\regex_pat_ej.txt";
+
+openfile "/h " + $filename;
+
+//正規表現の中身を全てコピー
+selectall;
+copy;
+
+//実行中の訳文ファイル.txtを一番上に表示する
+setactivehidemaru #hwnd;
+
+beginclipboardread;
+#i =0;
+$a[#i]=getclipboard;
+
+//一括UNDO印
+
+begingroupundo;
+
+while($a[#i]!=""){
+	//message $a[#i];
+	$line = $a[#i];
+	#tabIndex = strstr($line, "\t"); 
+	//置換対象文字列
+	$left = leftstr($line, #tabIndex);
+	//message "left = " + $left;
+	//置換後文字列の長さ
+	#rightlen = strlen($line)-#tabIndex-1;
+	//置換後文字列
+	$right = rightstr($line, #rightlen);
+	//test
+	$rightleft = leftstr($right, #rightlen-1);
+	//全置換
+	replaceall $left, $rightleft, regular, nocasesense;
+	#i =#i +1;
+	$a[#i]=getclipboard;
+}
+
+//一括UNDO印
+endgroupundo;
+
+endmacro;

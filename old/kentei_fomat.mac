@@ -1,0 +1,18 @@
+searchdown "i‰ğ“š—“j";
+begingroupundo;
+#flag = 0;
+while(true){
+	if(#flag != 1)	down;
+	if(code == eof)	break;
+	if(code != 0x0D){
+		moveto 76, y;
+		if(result){
+			insertreturn;
+			#flag = 1;
+		}
+	}
+	else	#flag = 0;
+}
+endgroupundo;
+endmacro;
+

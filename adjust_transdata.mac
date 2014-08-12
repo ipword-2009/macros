@@ -1,0 +1,126 @@
+//*************************************************
+//対訳データ開始行調整
+//2008.1.6 created
+//①対訳データの秀丸ファイルのみ開いて実行すること
+//②同時スクロール設定なしで実行すること
+//③１対訳データ間の改行を消しておくこと
+//  (convert_n2p.macで改行をスペースに変換する)
+
+//2009.1.23 updated 
+//各データ行の先頭で比較するように修正
+//*************************************************
+
+//英対訳データのハンドル
+#h1 = hidemaruhandle(0);
+
+//和対訳データのハンドル
+#h2 = findhidemaru("ibm_j.txt");
+
+//和対訳データ名の入力
+//$h2 = input("和対訳データのファイル名は？");
+//#h2 = findhidemaru($h2);
+if(#h2 == -1){
+	message "和対訳データは見つかりません。終了します。";
+	endmacro;
+}
+
+//カウンタ
+#count = 0;
+//1回調整毎の英対訳データ文末のy値、開始時は０
+#y1 = 0;
+//1回調整毎の和対訳データ文末のy値、開始時は０
+#y2 = 0;
+
+//一括UNDOマーク
+begingroupundo;
+
+while(true){
+	//***英対訳データ側の処理
+	setactivehidemaru #h1;
+	//各文末の行＃を取得
+	call GetLineNo;
+	//test
+	//message "#h1 ##return = " + str(##return);
+
+	if(##return == eof){
+		message "EOFです。終了します。";
+		break;
+	}
+	#y1 = ##return;
+	
+	//***和対訳データ側の処理
+	setactivehidemaru #h2;
+	//各文末の行＃を取得
+	call GetLineNo;	
+	//test
+	//message "#h2 ##return = " + str(##return);
+
+	if(##return == eof){
+		message "EOFです。終了します。";
+		break;
+	}
+	#y2 = ##return;
+
+	//#h1の文末の行#と、#h2の文末の行#とを比較
+	//#y1 == #y2の場合、何もしない
+	if(#y1 != #y2){
+		if(#y1 > #y2){
+			//message "come1";
+			//#h2に差分を挿入
+			//ここではすでに#h2がアクティブ
+			call InsertRtn #y1 - #y2;
+		}
+		else{
+			//message "come2";
+			//#h1に差分を挿入
+			setactivehidemaru #h1;
+			call InsertRtn #y2 - #y1;
+		}
+	}
+
+	//test
+	//if(#count == 5) break;
+	#count = #count + 1;
+
+}//end of while
+
+//一括UNDOマーク
+endgroupundo;
+
+endmacro;
+
+//***
+//各文末の行＃を取得するサブルーチン（折り返しウィンドウ幅表示のとき）
+//***
+GetLineNo:
+	if(#count == 0){
+		//実行開始時には、ファイルトップに移動しておく
+		gofiletop;
+		return y;
+	}
+
+	//次のデータがある行を検索（改行のみの行以外を検索）
+	setcompatiblemode 0x0F;
+	searchdown "^[^\n]", regular, nocasesense;
+
+	//データがある行番号（－１）を返す（linenoだとうまくいかない）
+	if(result)	return y;
+
+	//最後のデータの後は、EOFを検索
+	searchdown "^\n", regular, nocasesense;
+	while(x == 0 && code == 0x0D){
+		down;
+		if(code == eof)	return eof;
+	}
+
+
+//***
+//差分だけ改行を挿入するサブルーチン
+//***
+InsertRtn:
+	//##1が差分
+	while(##1 != 0){
+		insertreturn;
+		##1 = ##1 - 1;
+	}
+	return;

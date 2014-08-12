@@ -1,0 +1,112 @@
+//*************************************************
+//翻訳開始
+//2008.1.5 created
+//2012.10.26 PDIC(Unicode)とLogophile(Jamming後継)
+//を開くように修正
+//macros/etcにstart_trans.bat作成
+//デスクトップのバッチをクリックして起動する
+//*************************************************
+
+//起動元の秀丸ファイルのハンドル
+#h1 = hidemaruhandle(0);
+
+//対訳データ、原文データ、訳文データの管理ファイルを開く
+$mngFile = "C:\\Translation\\mng_2.txt";
+
+if(existfile($mngFile) == 0){
+	message $mngFile + "は存在しません。開始マクロを終了します。";
+	endmacro;
+}
+
+openfile "/h " + $mngFile;
+
+//管理ファイルの中身をすべてコピー
+selectall;
+copy;
+
+//開くファイル数のカウンタ
+#count = 0;
+
+beginclipboardread;
+#i=0;
+$a[#i]=getclipboard;
+//クリップボードから各ファイルパスを読み込む。
+while($a[#i]!=""){
+	$line = $a[#i];
+	//$lineに含まれている"\n"を取り除く
+	#returnIndex = strstr($line, "\n");
+	//"\n"の左側の文字列が位置サイズ情報とファイル名
+	$left = leftstr($line, #returnIndex);
+	//$leftから位置サイズ情報を抽出
+	#tabIndex = strstr($left, "\t");
+	$posInfo = leftstr($left, #tabIndex);
+	//$leftからファイル名を抽出
+	#rightlen = strlen($left)-#tabIndex-1;
+	//ファイル名
+	$file = rightstr($left, #rightlen);
+	//ここで、ファイルオープンしようとすると失敗するので、
+	//一旦ファイル名を配列に格納する
+	$files[#i][0]=$file;
+	//各ウィンドウの位置とサイズ情報を格納
+	$files[#i][1]=$posInfo;
+	//クリップボードの次の行を読み込む
+	#i = #i + 1;
+	$a[#i]=getclipboard;
+	#count = #count + 1;
+}
+
+#index = 0;
+//while(#index != 4){
+while(#index != #count){
+	$file = $files[#index][0];
+	//配列に格納した各ファイルを開く
+	openfile $file;
+	//管理ファイルで指定したサイズ位置情報を抽出
+	$posInfo = $files[#index][1];
+	#valueIndex = 0;
+	while(strstr($posInfo, ",") != -1){
+		//最初のカンマの位置
+		#commaIndex = strstr($posInfo, ",");
+		$value[#valueIndex] = leftstr($posInfo, #commaIndex);
+		//残りのサイズ位置情報の文字列の長さ
+		#rightlen = strlen($posInfo)-#commaIndex-1;
+		//残りのサイズ位置情報
+		$posInfo = rightstr($posInfo, #rightlen);
+		//値配列のインデックス増加
+		#valueIndex = #valueIndex + 1;
+	}
+	//各ファイルの位置とサイズを設定
+	//setwindowpos windowposx, windowposy, windowcx, windowcy
+	//message "$value[0] = " + $value[0];
+	//message "$value[0] = " + $value[0];
+	//message "$value[0] = " + $value[0];
+	//message "$posInfo) = " + $posInfo;
+
+	setwindowpos val($value[0]), val($value[1]), val($value[2]), val($posInfo);
+	#index = #index + 1;
+}
+
+
+//英辞郎（そのまま起動すると最後に閉じた位置に起動する）
+run "C:\\Program Files (x86)\\Personal Dictionary (Unicode)\\PDICU.exe";
+
+run "C:\\Program Files (x86)\\Logophile\\Logophile.exe";
+
+//MEMO 秀丸以外のアプリのサイズの指定はできない
+//ここで、setwindowposすると、このマクロによって
+//最後に開かれたファイルのサイズと位置が指定される
+
+//MEMO 左右ウィンドウの同時スクロール指定は、マクロで指定できない
+
+#a = findhidemaru($mngFile);
+if(#a == -1){
+	message "管理ファイルは開いてません。";
+	endmacro;
+}
+closehidemaru #a;
+if( !result ) message "管理ファイルの終了失敗です。";
+//else message "管理ファイルを閉じました。";
+
+closehidemaru #h1;
+if( !result ) message "起動元の秀丸ファイルの終了失敗です。";
+//else message "起動元の秀丸ファイルを閉じました。";

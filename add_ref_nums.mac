@@ -1,0 +1,30 @@
+//******************************************************
+//JTC　部材の符号をカッコで囲む処理
+//2014.06.24 created---strill working
+//動作確認ができたら、jtc_clean_pre.macの中に移す
+//******************************************************
+
+//メッセージカウンタ
+#count = 0;
+
+//一括UNDO印
+begingroupundo;
+
+//例）documents 1-2. 例）documents 1-2 cited in the ISR　→documents 1 and 2, documents 9-10, 11-12なども対応
+gofiletop;
+
+while (true) {
+	searchdown "[0-9]+", regular;
+	if(!result) break;
+	wordleft2;
+	selectword;
+	#count = #count + 1;
+	message "test";
+	if(#count == 3) break;
+}
+
+//一括UNDO印
+//endgroupundo;
+
+
+endmacro;
