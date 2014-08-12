@@ -3,8 +3,8 @@
 １．サーバ上（https://github.com/）に、FREE１００Mアカウントを作成
 
 ipword-2009
-mayumi.kato@ip-wordsmith.com
-b********0
+ipwordメアド
+b*********
 
 ２．Create a repository(Project nameをmacrosに)
 
@@ -28,9 +28,9 @@ git remote add origin git@github.com:ipword-2009/macros.git
 http://github.com/guides/using-git-and-github-for-the-windows-for-newbies
 を参照。
 
-$ ssh-keygen -C "mayumi.kato@ip-wordsmith.com" -t rsa
+$ ssh-keygen -C "ここにipwordメアド" -t rsa
 $ git config --global user.name "ipword.2009" 
-$ git config --global user.email mayumi.kato@ip-wordsmith.com
+$ git config --global user.email ここにipwordメアド
 
 <public keyを登録>
 C:\Users\mk\.ssh\id_rsa.pubの中身をコピーして、account settings>SSH keys>Add SSH keyに登録する

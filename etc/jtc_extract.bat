@@ -91,12 +91,12 @@ rem for /r %%f in (000003.tif, 000004.tif, 000005.tif, 000006.tif, 000007.tif, 0
 	)
 )
 
-rem C:\Translation\TRANS_DATA\日本翻訳センター\textdata ディレクトリを削除して新たに作成
+rem C:\Translation\TRANS_DATA\jtc\textdata ディレクトリを削除して新たに作成
 rem /sオプションは、サブディレクトリとファイルも含めてディレクトリを一括削除
 rem /qオプションは、削除前に確認メッセージを表示しない
 
-rd C:\Translation\TRANS_DATA\日本翻訳センター\textdata /s /q
-md C:\Translation\TRANS_DATA\日本翻訳センター\textdata
+rd C:\Translation\TRANS_DATA\jtc\textdata /s /q
+md C:\Translation\TRANS_DATA\jtc\textdata
 
 start "" "C:\Program Files (x86)\CrossLanguage\PDFtoData2\PDF2Data2.exe"
 
