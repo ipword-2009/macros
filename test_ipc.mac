@@ -1,0 +1,75 @@
+$key29 = "国際特許分類";
+
+call GrepIPCs $key29;
+
+endmacro;
+
+GrepIPCs:
+	grep $$1, "*.txt", ".", regular, fullpath;
+
+	//クリップボード履歴を念のため削除
+	clearcliphist;
+	//grepファイルの内容をコピー
+	selectall;
+	copy;
+
+	beginclipboardread;
+	#i=0;
+	$a[#i]=getclipboard;
+
+	//クリップボードから各ファイルパスを読み込む。
+	while($a[#i]!=""){
+		$line = $a[#i];
+		//$lineに含まれている"lnt.C1."のインデックス
+		#ipcIndex = strstr($line, "lnt.C1.");
+
+		if(#ipcIndex != -1){
+			//lnt.C1.がある場合は、すぐ右隣に、H01などIPC番号が続く
+			//lnt.C1.より右側のIPC番号を含む文字列取得
+			//7は、"lnt.C1."の長さ
+			#rightlen = strlen($line)-#ipcIndex - 7;
+			$ipcNums = rightstr($line, #rightlen);
+			//$ipcNums 例）G09F9/30(2006.01)1, GO2F1/1345(2006.01)i 
+			//message "ipcNums = " + $ipcNums;
+
+
+			#commaIndex = strstr($ipcNums, ",");
+			//whileで処理できないか
+			while(#commaIndex != -1){
+				//間にカンマがあり、IPC番号が2つ以上ある場合
+				
+				$ipcNums = rightstr($line, #rightlen);
+			}
+			//IPC番号が１つだけの場合
+
+
+			if(#commaIndex != -1){
+				//間にカンマがあり、IPC番号が2つ以上ある場合
+				
+			}
+			else{
+				//IPC番号が１つだけの場合
+			}
+
+		}
+		else{
+			//lnt.C1.がない場合は、例）国際特許分類(I Pc)lnt.C1補充欄参照
+			//補充欄参照の場合、grepしたファイルを開き、"POT/J"の一行を検索。"1(日.月.年)"の左の文字列が国際出願番号。
+			//取得した国際出願番号でgrepファイル。
+			//"補充欄"の文字で始まるファイルの内容を対象に、最終行の"様式POT/I"の検索。
+			//"様式POT/I"の直前の行に、日本語が含まれていれば、スキップ。含まれてなければ、IPC番号。
+			//"の続き"の横からbeginselect. searchdown "様式POT/I" copy して、IPC番号を取得する。
+			//取得できない場合は、そのまま補充欄参照とする（後で手入力）
+			message "補充欄参照の場合";
+		}
+
+//		$file = leftstr($line, #parenIndex);
+		//ここで、ファイルオープンしようとすると失敗する(最初のファイルを何度も開けようとする)ので、
+		//一旦ファイル名を配列に格納する
+//		$files[#i]=$file;
+		//クリップボードの次の行を読み込む
+		#i = #i + 1;
+		$a[#i]=getclipboard;
+	}
+	return;
+
