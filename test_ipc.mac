@@ -17,6 +17,7 @@ GrepIPCs:
 	#i=0;
 	$a[#i]=getclipboard;
 
+	#k = 0;
 	//クリップボードから各ファイルパスを読み込む。
 	while($a[#i]!=""){
 		$line = $a[#i];
@@ -30,28 +31,59 @@ GrepIPCs:
 			#rightlen = strlen($line)-#ipcIndex - 7;
 			$ipcNums = rightstr($line, #rightlen);
 			//$ipcNums 例）G09F9/30(2006.01)1, GO2F1/1345(2006.01)i 
-			//message "ipcNums = " + $ipcNums;
 
+			//#j = 0;
+			$ipcList ="";
+			while($ipcNums != ""){
+				//#commaIndex = strstr($ipcNums, ",");
+				$ipcNum = leftstr($ipcNums, 1);
+				if($ipcNum != " "){
+					//$ipcNumが取得できたのでIPC番号リストに格納
+					if($ipcList != ""){
+						$ipcList = $ipcList + "," + $ipcNum;
+					}
+					else if($ipcList == ""){
+						$ipcList = $ipcNum;
+					}
+					//test
+					//message "$ipcList = " + $ipcList;
+					
+					//次のIPC番号があるか？
+					//カンマもしくは)iで区切られている
+					#commaIndex = strstr($ipcNums, ",");
+					#iIndex = strstr($ipcNums, "i");
+					//カンマも)iもなければ、これ以上IPC番号はない
+					if((#commaIndex == -1) && (#iIndex == -1)){
+						break;
+					}
 
-			#commaIndex = strstr($ipcNums, ",");
-			//whileで処理できないか
-			while(#commaIndex != -1){
-				//間にカンマがあり、IPC番号が2つ以上ある場合
-				
-				$ipcNums = rightstr($line, #rightlen);
+					//今格納したIPC番号以外を、$ipcNumsに指定
+					if(#commaIndex != -1){
+						//1はカンマ1文字分
+						#rightlen = strlen($ipcNums) - #commaIndex - 1;
+					}
+					else if(#iIndex != -1){
+						#rightlen = strlen($ipcNums) - #iIndex - 1;
+					}
+					
+					$ipcNums = rightstr($ipcNums, #rightlen);
+
+					//test
+					//message "次の$ipcNums = " + $ipcNums;
+					//$ipcNumsが"", " \n", "\n"だったら、break
+					if(($ipcNums == "") || ($ipcNums == " \n") || ($ipcNums == "\n")){
+						//message "break";
+						break;
+					}
+					continue;
+				}
+				//$ipcNumsの先頭に" "があったら省く
+				$ipcNums = rightstr($ipcNums, strlen($ipcNums) - 1);
 			}
-			//IPC番号が１つだけの場合
 
 
-			if(#commaIndex != -1){
-				//間にカンマがあり、IPC番号が2つ以上ある場合
-				
-			}
-			else{
-				//IPC番号が１つだけの場合
-			}
 
-		}
+		}//end of if
 		else{
 			//lnt.C1.がない場合は、例）国際特許分類(I Pc)lnt.C1補充欄参照
 			//補充欄参照の場合、grepしたファイルを開き、"POT/J"の一行を検索。"1(日.月.年)"の左の文字列が国際出願番号。
@@ -61,15 +93,19 @@ GrepIPCs:
 			//"の続き"の横からbeginselect. searchdown "様式POT/I" copy して、IPC番号を取得する。
 			//取得できない場合は、そのまま補充欄参照とする（後で手入力）
 			message "補充欄参照の場合";
-		}
+			$ipcList = "補充欄参照";
+		}//end of else
 
-//		$file = leftstr($line, #parenIndex);
-		//ここで、ファイルオープンしようとすると失敗する(最初のファイルを何度も開けようとする)ので、
-		//一旦ファイル名を配列に格納する
-//		$files[#i]=$file;
+		//$ipcListを、$ipcNumsList[#k]に格納
+		$ipcNumsList[#k] = $ipcList;
+		//test
+		//message "$ipcNumsList" + str(#k) + "=" + $ipcNumsList[#k];
+
+		#k = #k + 1;
+
 		//クリップボードの次の行を読み込む
 		#i = #i + 1;
 		$a[#i]=getclipboard;
-	}
+	}//end of while
 	return;
 
