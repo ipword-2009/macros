@@ -1,9 +1,16 @@
 $key29 = "国際特許分類";
+$key30 = "補充欄参照";
+$key31 = "補充欄";
 
+//各国際出願番号順に、各文書毎に、IPC番号のリストを作成
 call GrepIPCs $key29;
+
+//IPC番号の記載が、補充欄参照の場合、補充欄からIPC番号を取得する
+call GrepOtherIPCs;
 
 endmacro;
 
+//各国際出願番号順に、各文書毎に、IPC番号のリストを作成
 GrepIPCs:
 	grep $$1, "*.txt", ".", regular, fullpath;
 
@@ -16,6 +23,8 @@ GrepIPCs:
 	beginclipboardread;
 	#i=0;
 	$a[#i]=getclipboard;
+
+	$filename="";
 
 	#k = 0;
 	//クリップボードから各ファイルパスを読み込む。
@@ -85,15 +94,13 @@ GrepIPCs:
 
 		}//end of if
 		else{
+			//補充欄参照の場合
 			//lnt.C1.がない場合は、例）国際特許分類(I Pc)lnt.C1補充欄参照
-			//補充欄参照の場合、grepしたファイルを開き、"POT/J"の一行を検索。"1(日.月.年)"の左の文字列が国際出願番号。
-			//取得した国際出願番号でgrepファイル。
-			//"補充欄"の文字で始まるファイルの内容を対象に、最終行の"様式POT/I"の検索。
-			//"様式POT/I"の直前の行に、日本語が含まれていれば、スキップ。含まれてなければ、IPC番号。
-			//"の続き"の横からbeginselect. searchdown "様式POT/I" copy して、IPC番号を取得する。
-			//取得できない場合は、そのまま補充欄参照とする（後で手入力）
-			message "補充欄参照の場合";
-			$ipcList = "補充欄参照";
+			$ipcList = $key30;
+			//ファイル名を格納しておく
+			//$lineに含まれている"("のインデックス
+			#parenIndex = strstr($line, "(");
+			$filename = leftstr($line, #parenIndex);
 		}//end of else
 
 		//$ipcListを、$ipcNumsList[#k]に格納
@@ -108,4 +115,93 @@ GrepIPCs:
 		$a[#i]=getclipboard;
 	}//end of while
 	return;
+
+
+//IPC番号の記載が、補充欄参照の場合、補充欄からIPC番号を取得する
+GrepOtherIPCs:
+
+#m = 0;
+while (#m != #k){
+	$ipcNums = $ipcNumsList[#m];
+	if($ipcNums == $key30){
+		//補充欄参照の場合、そのファイルを開き、"POT/J"の一行を検索。"1(日.月.年)"の左の文字列が国際出願番号。		
+		message "$filename = " + $filename; //000001_0005.txt
+		openfile "/h " + $filename;
+		gofiletop;
+		searchdown "POT/J";
+		searchdown "1(";
+		if(!result){
+			break;
+		}
+		beginsel;
+		golinetop;
+		copy;
+		
+		beginclipboardread;
+		#i=0;
+		$a[#i]=getclipboard;
+		//国際出願番号
+		$line = $a[#i];
+		#pctIndex = strstr($line, "POT/");
+		#rightlen = strlen($line)-#pctIndex - 4;
+		$iaCode = rightstr($line, #rightlen);
+		message "$iaCode = " + $iaCode;
+
+		//取得した国際出願番号でgrepファイル。
+		grep $iaCode, "*.txt", ".", regular, fullpath;
+
+		message "test";
+		//return;
+
+		//クリップボード履歴を念のため削除
+		clearcliphist;
+		//grepファイルの内容をコピー
+		selectall;
+		copy;
+
+		beginclipboardread;
+		#i=0;
+		$b[#i]=getclipboard;
+		
+		while($b[#i]!=""){
+			//$lineは各ファイルのフルパス
+			$line = $b[#i];
+			//000001_####.txtのファイル（上で$iaCodeを参照したファイル）は既に開いているので、次のファイルに進む。
+			if(strstr($line, $filename) != -1){
+				#i = #i + 1;
+				message "test2";
+				continue;
+			}
+
+			//ここからテスト
+			#parenIndex = strstr($line, "(");
+			$filename = leftstr($line, #parenIndex);
+			openfile "/h " + $filename;
+			//"補充欄"の文字で始まるファイルの内容を対象に、最終行の"様式POT/I"の検索。
+			gofiletop;
+			selectline;
+			searchdown $key31, word, inselect;
+			message "test3";
+				
+			if(!result){
+				#i = #i + 1;
+				continue;
+			}
+			//"補充欄"の文字で始まるファイルが見つかった
+			//最終行の"様式POT/I"の検索
+			message "$filename = " + $filename;
+			#i = #i + 1;
+
+		}//end of while
+
+
+		//"様式POT/I"の直前の行に、日本語が含まれていれば、スキップ。含まれてなければ、IPC番号。
+		//"の続き"の横からbeginselect. searchdown "様式POT/I" copy して、IPC番号を取得する。
+		//取得できない場合は、そのまま補充欄参照とする（後で手入力）
+
+		
+		break;
+	}
+	#m = #m + 1;
+}//end of while
 
