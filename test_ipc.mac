@@ -45,68 +45,18 @@ GrepIPCs:
 			call GetIPCs $ipcNums;
 			$ipcList = $$return;
 
-//			$ipcList ="";
-//			while($ipcNums != ""){
-//				$ipcNum = leftstr($ipcNums, 1);
-//				if($ipcNum != " "){
-//					//$ipcNumが取得できたのでIPC番号リストに格納
-//					if($ipcList != ""){
-//						$ipcList = $ipcList + "," + $ipcNum;
-//					}
-//					else if($ipcList == ""){
-//						$ipcList = $ipcNum;
-//					}
-//					
-//					//次のIPC番号があるか？
-//					//カンマもしくは)iで区切られている
-//					#commaIndex = strstr($ipcNums, ",");
-//					#iIndex = strstr($ipcNums, "i");
-//					//カンマも)iもなければ、これ以上IPC番号はない
-//					if((#commaIndex == -1) && (#iIndex == -1)){
-//						break;
-//					}
-//
-//					//今格納したIPC番号以外を、$ipcNumsに指定
-//					if(#commaIndex != -1){
-//						//1はカンマ1文字分
-//						#rightlen = strlen($ipcNums) - #commaIndex - 1;
-//					}
-//					else if(#iIndex != -1){
-//						#rightlen = strlen($ipcNums) - #iIndex - 1;
-//					}
-//					
-//					$ipcNums = rightstr($ipcNums, #rightlen);
-//
-//					//test
-//					//message "次の$ipcNums = " + $ipcNums;
-//					//$ipcNumsが"", " \n", "\n"だったら、break
-//					if(($ipcNums == "") || ($ipcNums == " \n") || ($ipcNums == "\n")){
-//						//message "break";
-//						break;
-//					}
-//					continue;
-//				}
-//				//$ipcNumsの先頭に" "があったら省く
-//				$ipcNums = rightstr($ipcNums, strlen($ipcNums) - 1);
-//			}// end of while
-
-
-
 		}//end of if
 		else{
 			//補充欄参照の場合
 			//lnt.C1.がない場合は、例）国際特許分類(I Pc)lnt.C1補充欄参照
-			$ipcList = $key30;
-			//ファイル名を格納しておく
-			//$lineに含まれている"("のインデックス
 			#parenIndex = strstr($line, "(");
 			$filename = leftstr($line, #parenIndex);
+		//補充欄参照の場合、IPCが羅列されている補充欄のファイル名をそのまま格納
+			$ipcList = $filename;
 		}//end of else
 
 		//$ipcListを、$ipcNumsList[#k]に格納
 		$ipcNumsList[#k] = $ipcList;
-		//test
-		//message "$ipcNumsList" + str(#k) + "=" + $ipcNumsList[#k];
 
 		#k = #k + 1;
 
@@ -123,9 +73,13 @@ GrepOtherIPCs:
 #m = 0;
 while (#m != #k){
 	$ipcNums = $ipcNumsList[#m];
-	if($ipcNums == $key30){
+    #keyIndex = strstr($ipcNums, "C:\\");
+	if(#keyIndex != -1){
 		//補充欄参照の場合、そのファイルを開き、"POT/J"の一行を検索。"1(日.月.年)"の左の文字列が国際出願番号。		
-//		message "$filename = " + $filename; //000001_0005.txt
+
+		//補充欄参照の場合、IPCが羅列されている補充欄のファイル名がそのまま格納されている
+
+		$filename = $ipcNums;
 		openfile $filename;
 		gofiletop;
 		searchdown "POT/J";
@@ -142,15 +96,12 @@ while (#m != #k){
 		$a[#i]=getclipboard;
 		//国際出願番号
 		$line = $a[#i];
-		#pctIndex = strstr($line, "POT/");
-		#rightlen = strlen($line)-#pctIndex - 4;
-		$iaCode = rightstr($line, #rightlen);
-		message "$iaCode = " + $iaCode;
+
+		//国際出願番号が途中で切れている場合があるので、最後の1を除いた右端5ケタを取得
+		$iaCode = rightstr($line, 5);
 
 		//取得した国際出願番号でgrepファイル。
 		grep $iaCode, "*.txt", ".", regular, fullpath;
-
-		//return;
 
 		//クリップボード履歴を念のため削除
 		clearcliphist;
@@ -172,18 +123,14 @@ while (#m != #k){
 		while($b[#i]!=""){
 			//$lineは各ファイルのフルパス
 			$line = $b[#i];
-//			message "$line1 = " + $line;
 			//000001_####.txtのファイル（上で$iaCodeを参照したファイル）は既に開いているので、次のファイルに進む。
 			if(strstr($line, $filename) != -1){
 				#i = #i + 1;
 				continue;
 			}
 
-			//ここからテスト
 			#parenIndex = strstr($line, "(");
 			$file = leftstr($line, #parenIndex);
-
-			message "$file = " + $file;
 
 			openfile $file;
 			//"補充欄"の文字で始まるファイルの内容を対象に、最終行の"様式POT/I"の検索
@@ -191,13 +138,12 @@ while (#m != #k){
 			searchdown $key31, word;
 				
 			if(!result){
-	//			message "!result, 補充欄なし";
+				//補充欄なしなら次のファイルに進む
 				#i = #i + 1;
 				continue;
 			}
 			//"補充欄"の文字で始まるファイルが見つかった
 			//最終行の"様式POT/I"の検索
-	//		message "見つかった$file = " + $file;
 			gofiletop;
 			searchdown "様式POT/I";
 			if(result){
@@ -227,15 +173,12 @@ while (#m != #k){
 				$c[0]=getclipboard;
 				//IPC番号は１行で羅列してあるので、コピーしたデータの１行目だけ取得でＯＫ
 				$ipcTmpNums = $c[0];
-				message "$ipcTmpNums =" + $ipcTmpNums;
 
-				//$ipcTmpNumsを整理してIPC番号だけにまとめる。
-				//まとめたら、$ipcNumsList[#m]に格納する。
+				//$ipcTmpNumsを整理してIPC番号だけにまとめる
 				call GetIPCs $ipcTmpNums;
-			    $ipcList = $$return;
 
-				//最後のIPCがCCうまくとれていない。修正する。
-				message "$ipcList =" + $ipcList;
+				//まとめたら、$ipcNumsList[#m]に格納する
+				$ipcNumsList[#m] = $$return;
 
 				//IPC番号が取得できたのでwhileを出る（次以降のgrepファイル結果は無視）
 				break;
@@ -245,11 +188,18 @@ while (#m != #k){
 
 		}//end of while
 
-		
-		break;
-	}
+	}//end of if
+
 	#m = #m + 1;
 }//end of while
+
+//test
+#i = 0;
+while ($ipcNumsList[#i] != ""){
+	$ipcNums = $ipcNumsList[#i];
+	message "last $ipcNums " + str(#i) + "=" + $ipcNums;
+	#i = #i + 1;
+}
 
 return;
 
@@ -261,16 +211,13 @@ GetIPCs:
 $ipcList ="";
 $ipcNums = $$1;
 while($ipcNums != ""){
+
 	$ipcNum = leftstr($ipcNums, 1);
-		message "$ipcNum = " + $ipcNum;
-	if($ipcNum != " "){
+
+	if(($ipcNum != " ") && ($ipcNum != ",")){
 		//$ipcNumが取得できたのでIPC番号リストに格納
-		if($ipcList != ""){
-			$ipcList = $ipcList + "," + $ipcNum;
-		}
-		else if($ipcList == ""){
-			$ipcList = $ipcNum;
-		}
+
+		$ipcList = $ipcList + $ipcNum;
 		
 		//次のIPC番号があるか？
 		//カンマもしくは)iで区切られている
@@ -281,29 +228,35 @@ while($ipcNums != ""){
 			break;
 		}
 
-		//今格納したIPC番号以外を、$ipcNumsに指定
-		if(#commaIndex != -1){
-			//1はカンマ1文字分
-			#rightlen = strlen($ipcNums) - #commaIndex - 1;
+		if(#commaIndex == -1){
+		    if(#iIndex != -1){
+				#rightlen = strlen($ipcNums) - #iIndex - 1;
+			}
 		}
-		else if(#iIndex != -1){
-			#rightlen = strlen($ipcNums) - #iIndex - 1;
+		else{
+			if(#iIndex != -1){
+				if(#iIndex < #commaIndex){
+					#rightlen = strlen($ipcNums) - #iIndex - 1;
+				}
+				else{
+					#rightlen = strlen($ipcNums) - #commaIndex - 1;
+				}
+			}
+			else{
+				#rightlen = strlen($ipcNums) - #commaIndex - 1;
+			}
 		}
 		
 		$ipcNums = rightstr($ipcNums, #rightlen);
 
-		//test
-		message "ifの中の$ipcNums = " + $ipcNums;
 		//$ipcNumsが"", " \n", "\n"だったら、break
 		if(($ipcNums == "") || ($ipcNums == " \n") || ($ipcNums == "\n")){
-			//message "break";
 			break;
 		}
 		continue;
 	}
-	//$ipcNumsの先頭に" "があったら省く
+	//$ipcNumsの先頭に" "やカンマがあったら省く
 	$ipcNums = rightstr($ipcNums, strlen($ipcNums) - 1);
-	message "-1した後のの$ipcNums = " + $ipcNums;
 }// end of while
 
 return $ipcList;
