@@ -8,9 +8,14 @@ call GrepIPCs $key29;
 //IPC番号の記載が、補充欄参照の場合、補充欄からIPC番号を取得する
 call GrepOtherIPCs;
 
+//最終的に複数あるIPCをまとめる
+call OrganizeIPCs;
+
 endmacro;
 
+//------------------------------------------------------
 //各国際出願番号順に、各文書毎に、IPC番号のリストを作成
+//------------------------------------------------------
 GrepIPCs:
 	grep $$1, "*.txt", ".", regular, fullpath;
 
@@ -67,7 +72,9 @@ GrepIPCs:
 	return;
 
 
+//---------------------------------------------------------------
 //IPC番号の記載が、補充欄参照の場合、補充欄からIPC番号を取得する
+//---------------------------------------------------------------
 GrepOtherIPCs:
 
 #m = 0;
@@ -185,7 +192,6 @@ while (#m != #k){
 			}
 			#i = #i + 1;
 			
-
 		}//end of while
 
 	}//end of if
@@ -194,12 +200,46 @@ while (#m != #k){
 }//end of while
 
 //test
+//#i = 0;
+//while ($ipcNumsList[#i] != ""){
+//	$ipcNums = $ipcNumsList[#i];
+//	message "last $ipcNums " + str(#i) + "=" + $ipcNums;
+//	#i = #i + 1;
+//}
+
+return;
+
+//-------------------------------------------
+//最終的に複数あるIPCをまとめるサブルーチン
+//-------------------------------------------
+OrganizeIPCs:
 #i = 0;
 while ($ipcNumsList[#i] != ""){
 	$ipcNums = $ipcNumsList[#i];
-	message "last $ipcNums " + str(#i) + "=" + $ipcNums;
+//	message "last $ipcNums " + str(#i) + "=" + $ipcNums;
+	#length = strlen($ipcNums);
+	#j = 0;
+	$tmp1 ="";
+	while(#j != #length){
+		$tmp2 = midstr($ipcNums, #j, 1);
+		if(strstr($tmp1, $tmp2) == -1){
+			$tmp1 = $tmp1 + $tmp2;
+		}
+		#j = #j + 1;
+	}
+	$ipcNumsList[#i] = $tmp1;
+
+//	message "$tmp1 " + str(#i) + "=" + $tmp1;
 	#i = #i + 1;
 }
+
+//test
+//#i = 0;
+//while ($ipcNumsList[#i] != ""){
+//	$ipcNums = $ipcNumsList[#i];
+//	message "last $ipcNums " + str(#i) + "=" + $ipcNums;
+//	#i = #i + 1;
+//}
 
 return;
 
