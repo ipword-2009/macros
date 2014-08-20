@@ -199,14 +199,6 @@ while (#m != #k){
 	#m = #m + 1;
 }//end of while
 
-//test
-//#i = 0;
-//while ($ipcNumsList[#i] != ""){
-//	$ipcNums = $ipcNumsList[#i];
-//	message "last $ipcNums " + str(#i) + "=" + $ipcNums;
-//	#i = #i + 1;
-//}
-
 return;
 
 //-------------------------------------------
