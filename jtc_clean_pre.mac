@@ -198,8 +198,6 @@ newfile;
 insertreturn;
 saveas "all.txt";
 
-//新規作成したファイルのハンドル
-//#all = hidemaruhandle(0);
 
 //新規作成して改行を入れたので、削除
 backspace;
@@ -211,8 +209,7 @@ while($nums[#j]!=""){
 	#count = #i;
 	#i = 0;
 	while(#i != #count){
-//		setactivehidemaru #all;
-		//新規作成したファイルのハンドル
+		//新規作成したファイルをアクティブにする
 		//うまくハンドルが取れていなくてgrep結果ファイルを更新してしまっていたので修正
 		setactivehidemaru findhidemaru( "all.txt" );
 		insertfile $files[#i];
@@ -234,7 +231,6 @@ while($nums[#j]!=""){
 	#j = #j + 1;
 }
 
-//setactivehidemaru #all;
 setactivehidemaru findhidemaru( "all.txt" );
 
 //
@@ -380,14 +376,7 @@ replaceall $key24, "";
 replaceall $key28, "";
 
 
-//ファイル最後に挿入されてしまう余分な行（C:\...）grep履歴？を削除
-gofileend;
-beginsel;
-up;
-delete;
-
 save;
-//saveas "all.txt";
 
 exitall;
 endmacro;
@@ -703,9 +692,7 @@ while (#m != #k){
     #keyIndex = strstr($ipcNums, "C:\\");
 	if(#keyIndex != -1){
 		//補充欄参照の場合、そのファイルを開き、"POT/J"の一行を検索。"1(日.月.年)"の左の文字列が国際出願番号。		
-
-		//補充欄参照と記載されたファイル名がそのまま格納されている。（000001のファイル）
-
+		//$ipcNumsには補充欄参照と記載されたファイル名がそのまま格納されている。（000001のファイル）
 		$filename = $ipcNums;
 		openfile $filename;
 		gofiletop;
@@ -815,6 +802,7 @@ while (#m != #k){
 		}//end of while
 
 	//grepして開いた全てのファイルを閉じておく（clean処理でまた開くときにアラートがポップするため）
+	//実行元ファイル以外を閉じるため、実行元ファイルをアクティブにする
 	setactivehidemaru #h1;
 	#i = 0;
 	while($b[#i]!=""){
