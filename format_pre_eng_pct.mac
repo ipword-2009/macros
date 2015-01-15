@@ -93,13 +93,21 @@ if( result ){
 	call AddMsg "＊英数字のみ、半角に変換しました。\n";
 }
 
-//上書き保存
-save;
-
 
 //部材名+符号＃をスペースで分割
 //例）ゲージ本体48　-> ゲージ本体 48
 replaceall "[^図|ステップ|実施例|請求項|乃至|ないし|または|又は|および|及び|0-9|a-Z|\\[|\\]|\\t|,|、|\\(|\\)| |/]+\\f[0-9|a-Z]+", "\\0 \\1",regular, nocasesense;
+
+
+//2014.10.20 修正
+//日本語+アルファベットをスペースで分割
+replaceall "[ぁ-ン|亜-黑]+\\f[a-Z]+", "\\0 \\1", regular, nocasesense;
+
+//アルファベット+日本語をスペースで分割
+replaceall "[a-Z]+\\f[ぁ-ン|亜-黑]+", "\\0 \\1", regular, nocasesense;
+
+//上書き保存
+save;
 
 //st起動して置換
 runsync2 "C:\\Translation\\st\\st.exe";

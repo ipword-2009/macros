@@ -5,12 +5,19 @@
 //前提条件：作業フォルダ内に既にData2ProでTEXT変換した
 //          ファイル(000003.txtなど)がある
 //2014.8.20
-//各国際出願番号の下に第I欄のIPCを取得するように修正 
+//各国際出願番号の下に第I欄のIPCを取得するように修正
+//2015.1.15
+//$key1, $key3を修正
+//最後のクリーン処理にてPCTが入る行も削除するように修正
 //******************************************************
-$key1 = "国際出願番号POT/|国際出願番号P CT/ ";
+//---2015.1.15 修正
+$key1 = "国際出願番号POT/|国際出願番号P CT/ |国際出願番号PCT/J ";
+//$key1 = "国際出願番号POT/|国際出願番号P CT/ ";
 //第V欄のキーワード
 $key2 = "2.文献及び説明|文献及び説明\\(文献\\)|2 \n文献及び説明";
-$key3 = "^様式POT/I .*\n";
+//---2015.1.15 修正
+$key3 = "^様式POT/I .*\n|様式PCT/I .*\n";
+//$key3 = "^様式POT/I .*\n";
 $key4 = "新規性、 進歩性又は産業上の利用可能性についての見解の不作成";
 //第VIII欄のキーワード
 $key5 = "第V]]I欄 国際出願に対する意見";
@@ -50,13 +57,13 @@ $key31 = "補充欄";
 
 //---------------------------------------2014.08.20 修正 start
 //各国際出願番号順に、各文書毎に、IPC番号のリストを作成
-call GrepIPCs $key29;
+//call GrepIPCs $key29;
 
 //IPC番号の記載が、補充欄参照の場合、補充欄からIPC番号を取得する
-call GrepOtherIPCs;
+//call GrepOtherIPCs;
 
 //最終的に複数あるIPCをまとめる
-call OrganizeIPCs;
+//call OrganizeIPCs;
 //---------------------------------------2014.08.20 修正 end
 //
 //$key2を含むファイルのクリーン処理
@@ -215,16 +222,16 @@ while($nums[#j]!=""){
 		insertfile $files[#i];
 		insertreturn;
 //---------------------------------------2014.08.20 修正 start
-		if(#i == 0){
-			searchup "国際出願番号POT/";
-			down;
-			golinetop;
-			//Vの前にIPCを挿入し、改行
-			insert $ipcNumsList[#j];
-			insertreturn;
-			gofileend;
-			insertreturn;
-		}
+//		if(#i == 0){
+//			searchup "国際出願番号POT/";
+//			down;
+//			golinetop;
+//			//Vの前にIPCを挿入し、改行
+//			insert $ipcNumsList[#j];
+//			insertreturn;
+//			gofileend;
+//			insertreturn;
+//		}
 //---------------------------------------2014.08.20 修正 end
 		#i = #i + 1;
 	}
@@ -249,6 +256,12 @@ replaceall "、 、", "、";
 replaceall "国際出願番号POT/ J P20 \\f[0-9]+", "JP20\\1" , regular, casesense;
 replaceall "国際出願番号POT/ ?J P\\f[0-9|\\/]+\\f \\f[0-9]+", "JP\\1\\3" , regular, casesense;
 replaceall "国際出願番号POT/ ?J P\\f[0-9|\\/]+", "JP\\1" , regular, casesense;
+//----2015.1.15 修正　start
+replaceall "国際出願番号PCT/ J P20 \\f[0-9]+", "JP20\\1" , regular, casesense;
+replaceall "国際出願番号PCT/ ?J P\\f[0-9|\\/]+\\f \\f[0-9]+", "JP\\1\\3" , regular, casesense;
+replaceall "国際出願番号PCT/ ?J P\\f[0-9|\\/]+", "JP\\1" , regular, casesense;
+//----2015.1.15 修正 end
+
 replaceall "国際出願番号P CT/ J P20 \\f[0-9]+", "JP20\\1" , regular, casesense;
 replaceall "文献[0-9]+:\\f(WO|JP)", "\\0 \\1", regular, casesense;
 replaceall "[0-9]+\\f:\\f[a-Z]+", "\\0: \\2", regular, nocasesense;
@@ -363,6 +376,7 @@ replaceall "開開", "開閉";
 replaceall "着月見白在", "着脱自在";
 replaceall "貝占り付", "貼り付";
 replaceall "貝占付", "貼付";
+replaceall "貝占り合", "貼り合";
 replaceall "ェタノール", "エタノール";
 replaceall "接角出", "接触";
 replaceall "ェチル", "エチル";
@@ -377,6 +391,15 @@ replaceall "エキスバント", "エキスパンド";
 replaceall "理込", "埋込";
 replaceall "(次直に続く)", "";
 replaceall "がっかない", "がつかない";
+replaceall "させっつ", "させつつ";
+replaceall "連転", "運転";
+replaceall "といつた", "といった";
+replaceall "月英", "膜";
+replaceall "ェツチング", "エッチング";
+replaceall "白明", "自明";
+replaceall "買通孔", "貫通孔";
+replaceall "組さ", "粗さ";
+replaceall "室素", "窒素";
 replaceall $key21, "";
 replaceall $key22, "";
 replaceall $key23, "";
