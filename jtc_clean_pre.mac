@@ -401,6 +401,7 @@ replaceall "”ƒ’ÊE", "ŠÑ’ÊE";
 replaceall "‘g‚³", "‘e‚³";
 replaceall "º‘f", "’‚‘f";
 replaceall "Î—¬_", "—°_";
+replaceall "“K’¼", "“K‹X";
 replaceall $key21, "";
 replaceall $key22, "";
 replaceall $key23, "";
